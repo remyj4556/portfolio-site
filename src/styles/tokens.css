@@ -1,0 +1,58 @@
+:root {
+  /* Colour */
+  --bg: #0a0e0a;
+  --surface: #0f1a12;
+  --border: #1f3326;
+  --border-strong: #4a7058;
+  --text: #d4e4d8;
+  --text-muted: #8aa394;
+  --accent: #00ff41;
+  --cal-0: #243a2c;
+  --cal-1: #0b4d1c;
+  --cal-2: #087a26;
+  --cal-3: #00b82e;
+  --cal-4: #00ff41;
+
+  /* Type */
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: clamp(1.5rem, 4vw, 2rem);
+
+  /* Space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 96px;
+
+  /* Shape */
+  --radius: 8px;
+  --radius-sm: 4px;
+
+  /* Layout */
+  --header-h: 56px;
+  --header-inset: 12px;
+  --content-max: 1100px;
+  --gutter: 16px;
+  --section-pad: 64px;
+  --transition: 200ms ease;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 24px;
+    --section-pad: var(--space-8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition: 0s;
+  }
+}
