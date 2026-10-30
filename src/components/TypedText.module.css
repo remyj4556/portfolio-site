@@ -1,0 +1,31 @@
+/* All phrases share one grid cell so the height is always the tallest phrase's. */
+.typed {
+  display: grid;
+}
+
+.cell {
+  grid-area: 1 / 1;
+}
+
+.sizer {
+  visibility: hidden;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  margin-left: 0.1em;
+  vertical-align: baseline;
+  background: var(--accent);
+}
+
+.blink {
+  animation: blink 1s steps(1, end) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,15 @@
+.total {
+  margin-bottom: var(--space-4);
+}
+
+.scroller {
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.meta {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}

@@ -1,0 +1,11 @@
+.toggle {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  padding: var(--space-1) var(--space-2);
+  white-space: pre;
+  transition: color var(--transition);
+}
+
+.toggle:hover {
+  color: var(--text);
+}
