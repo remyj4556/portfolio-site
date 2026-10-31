@@ -241,7 +241,9 @@ Small hover/focus/expand transitions (≤200ms, colour/opacity/grid-row only) ar
 | Script | Command |
 |---|---|
 | `fetch-contributions` | `node scripts/fetch-contributions.mjs` |
-| `predev`, `prebuild`, `pretypecheck` | `npm run fetch-contributions` |
+| `fetch-resume` | `node scripts/fetch-resume.mjs` |
+| `predev`, `pretypecheck` | `npm run fetch-contributions` |
+| `prebuild` | `npm run fetch-contributions && npm run fetch-resume` |
 | `dev` | `vite` |
 | `build` | `tsc -b && vite build` |
 | `typecheck` | `tsc -b` |
@@ -261,6 +263,7 @@ export type Site = {
   typedPhrases: [string, ...string[]];  // non-empty, looped in hero (§4.2.2)
   intro: string;                        // hero paragraph
   resumePath: `/${string}.pdf`;         // file in public/
+  resumeSourceUrl: string;              // raw PDF URL fetched into resumePath at build time
   email: string;
   linkedinUrl: string;                  // full URL
   githubUsername: string;
@@ -294,6 +297,8 @@ export const projects = [ /* ... */ ] satisfies Project[];
 - **Derived values** live in `src/content/derived.ts` (not author-edited): `githubUrl = https://github.com/${githubUsername}`, `githubDisplay = github.com/${githubUsername}`, `linkedinDisplay` (§4.5). No URL is hardcoded in more than one place.
 - **Dev-only validation:** when `import.meta.env.DEV`, `main.tsx` asserts every project `id` is unique and matches `/^[a-z0-9-]+$/`, throwing a descriptive error otherwise.
 - **Résumé filename:** the PDF is named after the author (e.g. `Remington-Jarrett-Resume.pdf`) so it is identifiable if a recruiter saves it. It opens in a new tab; no `download` attribute.
+- **Résumé source:** the authoritative résumé lives in the author's public repo `remyj4556/resume`. Before each build, `scripts/fetch-resume.mjs` downloads `site.resumeSourceUrl` (the `raw.githubusercontent.com` URL, with a 15s timeout) and overwrites `public${resumePath}`, so the daily rebuild (§5.3) picks up résumé changes. The response must be HTTP 2xx and start with `%PDF-`; otherwise the script warns and exits 0, leaving the committed copy in place. The committed PDF is therefore the fallback and should be refreshed by committing occasionally. Runs only in `prebuild`, not `predev`/`pretypecheck`.
+  - **Rationale:** serving the PDF from the site's own domain opens it directly in the browser; linking to GitHub instead would show GitHub's viewer page (blob URL) or force a download (raw URL, served as `application/octet-stream`). Failure is soft — unlike contributions (§5.3) — because a stale résumé is better than a failed deploy, and a broken fetch is not something the author needs to act on urgently.
 
 ### 5.3 Contribution data (build-time)
 GitHub's contribution calendar is only available via the authenticated GraphQL API (`user.contributionsCollection.contributionCalendar`). A token cannot be shipped to the browser, so data is fetched by a script before dev, build, and typecheck (scripts in §5.1).
@@ -341,7 +346,7 @@ export type ContributionData =
 api/
   rebuild.js            Vercel cron function
 public/
-  <Name>-Resume.pdf     placeholder
+  <Name>-Resume.pdf     fallback copy; overwritten at build by scripts/fetch-resume.mjs
   404.html
   og-image.png          1200×630 placeholder
   favicon.svg
@@ -351,6 +356,7 @@ public/
   projects/             project screenshots
 scripts/
   fetch-contributions.mjs
+  fetch-resume.mjs
 src/
   main.tsx
   App.tsx

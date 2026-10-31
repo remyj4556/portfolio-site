@@ -8,9 +8,10 @@
   },
   "scripts": {
     "fetch-contributions": "node scripts/fetch-contributions.mjs",
+    "fetch-resume": "node scripts/fetch-resume.mjs",
     "predev": "npm run fetch-contributions",
     "dev": "vite",
-    "prebuild": "npm run fetch-contributions",
+    "prebuild": "npm run fetch-contributions && npm run fetch-resume",
     "build": "tsc -b && vite build",
     "pretypecheck": "npm run fetch-contributions",
     "typecheck": "tsc -b",

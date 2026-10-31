@@ -6,6 +6,7 @@ export type Site = {
   typedPhrases: [string, ...string[]];  // non-empty, looped in hero
   intro: string;                        // hero paragraph
   resumePath: `/${string}.pdf`;         // file in public/
+  resumeSourceUrl: string;              // raw PDF URL fetched into resumePath at build time
   email: string;
   linkedinUrl: string;                  // full URL
   githubUsername: string;
