@@ -153,14 +153,16 @@ Small hover/focus/expand transitions (≤200ms, colour/opacity/grid-row only) ar
 #### 4.2.2 Typed phrase
 - Source: `site.typedPhrases` (≥1 phrase, enforced by type — §5.2).
 - **Initial state:** the first phrase is shown in full on load.
-- **Loop:** hold 2s → delete (35ms/char) → pause 0.5s → type the next phrase (70ms/char), wrapping to the first after the last → repeat. With one phrase, it deletes and retypes that phrase.
-- **Cursor:** a CSS-drawn block (an `inline-block` element, `width: 0.6em`, `height: 1em`, `--accent` background, vertically aligned with the text baseline) — not a text glyph. Blinks at a 1s period while the loop runs; solid when paused or under reduced motion.
+- **Sequence (plays once):** hold 2s → delete (35ms/char) back to the text shared with the next phrase → pause 0.5s → type the rest of the next phrase (70ms/char) → repeat until the last phrase, which is held indefinitely. "Shared text" is the two phrases' common prefix, trimmed back to the end of a word (trailing spaces dropped), so e.g. `I build reliable software for the web.` → `I build reliable` → `I build reliable applications.`. With one phrase, it simply holds.
+  - **Rationale:** deleting only back to the shared prefix reads as the author revising the sentence, which is more interesting than retyping whole phrases; ending on a settled line (`I build.`) avoids a perpetual loop competing with the hero for attention.
+  - **Phrases** carry their own terminal punctuation. Current sequence: `I build reliable software for the web.` → `I build reliable applications.` → `I build fun video games.` → `I build.`
+- **Cursor:** a CSS-drawn block (an `inline-block` element, `width: 0.6em`, `height: 1em`, `--accent` background, vertically aligned with the text baseline) — not a text glyph. Blinks at a 1s period while motion is active (including during the final hold); solid when paused or under reduced motion.
 - **Stable height:** all phrases are rendered stacked in the same CSS grid cell (`grid-area: 1/1`), invisible (`visibility: hidden`) except the animated one, so the container's height is always that of the tallest phrase at the current width. No JS measurement.
-- **Screen readers:** the animated element and the invisible sizers are `aria-hidden="true"`. A visually-hidden element contains all phrases as plain text, separated by periods.
+- **Screen readers:** the animated element and the invisible sizers are `aria-hidden="true"`. A visually-hidden element contains all phrases as plain text, joined by spaces (each phrase ends with its own punctuation).
 - **Pause/resume semantics:**
   - Pausing completes the current phrase instantly and stops.
-  - Resuming starts a fresh 2s hold on that phrase, then continues the loop.
-  - Reduced motion turning **on** behaves like pause, but displays the first phrase. Turning **off** resumes from the displayed phrase with a 2s hold — unless the user had pressed pause, in which case it stays paused. The pause state persists across reduced-motion changes within the page load.
+  - Resuming starts a fresh 2s hold on that phrase, then continues the sequence (if paused on the last phrase, nothing further happens).
+  - Reduced motion turning **on** behaves like pause, but displays the first phrase (chosen over the final `I build.` because it is the most informative line for a reader who never sees the animation). Turning **off** resumes from the displayed phrase with a 2s hold — unless the user had pressed pause, in which case it stays paused. The pause state persists across reduced-motion changes within the page load.
 
 #### 4.2.3 Pause control
 - A `<button>` reading `[ pause motion ]` / `[ resume motion ]`, `--text-muted`, `--text-xs`, with `aria-pressed`.
@@ -260,7 +262,7 @@ export type Site = {
   firstName: string;                    // header logo
   role: string;                         // static role line in hero, <title>
   description: string;                  // meta / OG description (~150 chars)
-  typedPhrases: [string, ...string[]];  // non-empty, looped in hero (§4.2.2)
+  typedPhrases: [string, ...string[]];  // non-empty, played once in hero (§4.2.2)
   intro: string;                        // hero paragraph
   resumePath: `/${string}.pdf`;         // file in public/
   resumeSourceUrl: string;              // raw PDF URL fetched into resumePath at build time

@@ -3,7 +3,7 @@ export type Site = {
   firstName: string;                    // header logo
   role: string;                         // static role line in hero, <title>
   description: string;                  // meta / OG description (~150 chars)
-  typedPhrases: [string, ...string[]];  // non-empty, looped in hero
+  typedPhrases: [string, ...string[]];  // non-empty, played once in hero
   intro: string;                        // hero paragraph
   resumePath: `/${string}.pdf`;         // file in public/
   resumeSourceUrl: string;              // raw PDF URL fetched into resumePath at build time
