@@ -17,21 +17,36 @@ type Props = {
   className?: string
 }
 
-// The loop as a state machine: each state schedules the next one.
-function nextStep(state: State, phrases: readonly string[]): { state: State; delay: number } {
-  const length = phrases[state.index].length
+// Characters of `from` kept when moving to `to`: their common prefix, trimmed
+// back to the end of a word so the next phrase types its own leading space.
+function sharedLength(from: string, to: string): number {
+  let keep = 0
+  while (keep < from.length && keep < to.length && from[keep] === to[keep]) keep++
+  while (keep > 0 && from[keep - 1] === ' ') keep--
+  return keep
+}
+
+// The sequence as a state machine: each state schedules the next one, until
+// the last phrase is held for good (null).
+function nextStep(state: State, phrases: readonly string[]): { state: State; delay: number } | null {
+  const phrase = phrases[state.index]
+  const next = phrases[state.index + 1]
   switch (state.phase) {
-    case 'hold':
-      return { state: { ...state, phase: 'deleting', shown: length }, delay: HOLD_MS }
+    case 'hold': {
+      if (next === undefined) return null
+      const keep = sharedLength(phrase, next)
+      return { state: { ...state, phase: keep < phrase.length ? 'deleting' : 'gap', shown: phrase.length }, delay: HOLD_MS }
+    }
     case 'deleting': {
-      const shown = Math.max(state.shown - 1, 0)
-      return { state: { ...state, shown, phase: shown === 0 ? 'gap' : 'deleting' }, delay: DELETE_MS }
+      const shown = state.shown - 1
+      const done = shown <= sharedLength(phrase, next)
+      return { state: { ...state, shown, phase: done ? 'gap' : 'deleting' }, delay: DELETE_MS }
     }
     case 'gap':
-      return { state: { index: (state.index + 1) % phrases.length, shown: 0, phase: 'typing' }, delay: GAP_MS }
+      return { state: { index: state.index + 1, shown: state.shown, phase: 'typing' }, delay: GAP_MS }
     case 'typing': {
-      const shown = Math.min(state.shown + 1, length)
-      return { state: { ...state, shown, phase: shown >= length ? 'hold' : 'typing' }, delay: TYPE_MS }
+      const shown = Math.min(state.shown + 1, phrase.length)
+      return { state: { ...state, shown, phase: shown >= phrase.length ? 'hold' : 'typing' }, delay: TYPE_MS }
     }
   }
 }
@@ -53,6 +68,7 @@ export function TypedText({ phrases, paused, reducedMotion, className }: Props) 
   useEffect(() => {
     if (!active) return
     const step = nextStep(state, phrases)
+    if (!step) return
     const timer = window.setTimeout(() => setState(step.state), step.delay)
     return () => window.clearTimeout(timer)
   }, [active, state, phrases])
@@ -72,7 +88,7 @@ export function TypedText({ phrases, paused, reducedMotion, className }: Props) 
         {text}
         <span className={`${styles.cursor} ${active ? styles.blink : ''}`} />
       </span>
-      <VisuallyHidden>{phrases.join('. ')}</VisuallyHidden>
+      <VisuallyHidden>{phrases.join(' ')}</VisuallyHidden>
     </div>
   )
 }

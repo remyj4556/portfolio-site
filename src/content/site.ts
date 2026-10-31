@@ -6,7 +6,12 @@ export const site = {
   role: 'Software Engineer',
   description:
     'Remy Jarrett is a software engineer who builds fast, accessible, well-tested web applications. See projects, GitHub activity, and contact details.',
-  typedPhrases: ['I build reliable software for the web.'],
+  typedPhrases: [
+    'I build reliable software for the web.',
+    'I build reliable applications.',
+    'I build fun video games.',
+    'I build.',
+  ],
   intro:
     'This is a placeholder introduction. Replace it with two or three sentences about what you build, what you care about, and the kind of role you are looking for.',
   resumePath: '/Remy-Jarrett-Resume.pdf',
