@@ -29,3 +29,7 @@ src/data/contributions.json
 # Vercel
 .vercel
 .env*
+
+# Local tooling
+CLAUDE.md
+.claude/
