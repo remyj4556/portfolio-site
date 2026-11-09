@@ -1,6 +1,6 @@
 # DESIGN.md — Portfolio Site
 
-**Status:** Draft v0.7 — "terminal-pop" redesign, on branch `redesign/terminal-pop`. Not yet reviewed by goldfish; author decisions on the first draft applied (§10). Supersedes the visual direction of v0.6; everything not mentioned here is unchanged from v0.6.
+**Status:** v0.7 — "terminal-pop" redesign, implemented on branch `redesign/terminal-pop` (goldfish review skipped by the author for this experiment). Decisions from the first draft applied (§10); deviations found while building are recorded in the sections they affect and in §8. Supersedes the visual direction of v0.6; everything not mentioned here is unchanged from v0.6.
 **Owner:** the site's author (referred to as "the author").
 
 This document is the single source of truth for the project. It is written to be read with no other context.
@@ -63,7 +63,7 @@ The palette is unchanged from v0.6 — terminal green is the author's brand — 
 | `--border` | `#1f3326` | Decorative 1px borders (~1.5:1 on `--bg`; decorative only) |
 | `--border-strong` | `#4a7058` | Borders that must read clearly: tech tags, menu button, card hover (≥3:1 on `--bg`) |
 | `--text` | `#d4e4d8` | Primary text |
-| `--text-muted` | `#8aa394` | Secondary text |
+| `--text-muted` | `#9ab5a4` | Secondary text (lightened from v0.6's `#8aa394`: the kit wants 7:1 for text people read, and 14px card summaries on `--surface` measured 6.58:1) |
 | `--accent` | `#00ff41` | Prompts, typed phrase, cursor, primary button, link hover, focus rings, text selection |
 | `--cal-0` … `--cal-4` | `#243a2c`, `#0b4d1c`, `#087a26`, `#00b82e`, `#00ff41` | Contribution calendar levels 0 → 4 |
 
@@ -130,24 +130,23 @@ The kit chooses its parts by script, not by taste, so the result is recorded her
 ### 4.1 Header
 - Kit `nav-centre`, fixed to the top, `--surface` background with a 1px `--border`; no `backdrop-filter`. **Logo** (left, links to `#top`): the kit's `ring` mark followed by the first name in `--accent`; accessible name `<name>, back to top` (the visible first name is contained in it). The v0.6 `<FirstName />` bracket treatment is dropped.
 - **Links:** Projects, Activity, Contact (to `#projects`, `#activity`, `#contact`), then **Résumé** as the primary-style button opening the PDF in a new tab. Smooth-scroll (instant under reduced motion); sections keep a `scroll-margin-top` that clears the header.
-- **Mobile:** links and Résumé collapse behind a menu `<button>` with `aria-expanded` and `aria-controls`; the menu is a full-screen panel (kit rule), links at least 48px tall, Résumé last. Unchanged from v0.6: opening does not move focus; it closes on link click, Escape (focus returns to the button), click outside, and focus leaving the header.
+- **Mobile:** links and Résumé collapse behind a menu `<button>` with `aria-expanded` and `aria-controls`; the menu is a full-screen panel (kit rule), links at least 48px tall, Résumé last. The menu's behaviour is the kit's script, not React state: the toggle flips `aria-expanded`, the sheet locks page scroll, and it closes on a link tap, on Escape (focus returns to the toggle) and when the window grows to desktop width. v0.6's click-outside and focus-leaves-header closing are dropped: a full-screen sheet has no outside, and tabbing out of it is not possible while it locks the page. The skip link targets `<main id="main">`.
 - No active-section highlighting in v1.
 
 ### 4.2 Hero
 - `<section id="top">`, one full screen on its own at every width (`min-height: 100svh`), kit `collage` layout.
 - **Left column**, in DOM order after the pause control:
-  1. **Pause control** (§4.2.3), first in DOM so keyboard users reach it before moving content.
-  2. **h1** — the author's name, the page's single `h1`.
-  3. **Role** — static text from `site.role`, always visible, never animated.
-  4. **Buttons** (two at most): primary **View projects** (`#projects`), secondary **Email me** (`mailto:`).
-  5. **Icon links** — GitHub and LinkedIn (inline SVG, accessible names, external-link rules §4.7).
-  6. **Proof line** (`--text-muted`): `1,234 contributions in the last year`, from the same data and formatter as §4.4; omitted when contribution data is unavailable.
-- **Right column:** the **terminal window** (§4.2.2) on the effect ground (§4.2.1). It is cut by the frame's right and bottom edges on desktop (the cut falls in empty margin, never through text). On phones the window stands alone under the text, whole.
+  1. **h1** — the author's name, the page's single `h1`.
+  2. **Role** — static text from `site.role`, always visible, never animated.
+  3. **Buttons** (two at most): primary **View projects** (`#projects`), secondary **Email me** (`mailto:`).
+  4. **Icon links** — GitHub and LinkedIn (inline SVG, accessible names, external-link rules §4.7).
+  5. **Proof line** (`--text-muted`): `1,234 contributions in the last year`, from the same data and formatter as §4.4; omitted when contribution data is unavailable.
+- **Right column:** the **terminal window** (§4.2.2) on the effect ground (§4.2.1); the pause control (§4.2.3) lives in the window's title bar, so it comes before the moving typed line in DOM order and never overlaps the headline at narrow widths. It is cut by the frame's right and bottom edges on desktop (the cut falls in empty margin, never through text). On phones the window stands alone under the text, whole.
 - The "Hi, my name is" label from v0.6 is dropped.
 
 #### 4.2.1 Effect ground
 - The hero's art frame carries the kit's `grain-gradient` ground (`data-fx`), tinted from the palette in §3.2 (no violet), mounted by the kit's own script after React renders. No custom canvas code on the page.
-- It never sits under body text; the text column is on the plain page ground. After it assembles it holds (no constant churn). A still fallback shows under reduced motion, on phones, and when WebGL fails.
+- It never sits under body text; the text column is on the plain page ground. It is tuned to near-rest (`speed: 0.15`, film-grain motion off) rather than the kit's defaults, which drift and shimmer constantly. The kit draws it once as a picture on phones, shows one still frame under reduced motion, and falls back to a CSS picture without WebGL. On wider screens the kit adds its own small **pause disc** at the art's lower right, which stops the ground; this is what satisfies WCAG 2.2.2 for the gradient (§4.2.3).
 - **The matrix rain is removed** (component and code deleted). **Rationale:** it was the page's only flourish and the most familiar device of its genre; the author chose to replace it.
 
 #### 4.2.2 Terminal window and typed phrase
@@ -163,12 +162,13 @@ The kit chooses its parts by script, not by taste, so the result is recorded her
 - **Pause/resume semantics** unchanged: pausing completes the current phrase instantly; resuming starts a fresh 2s hold, then continues; reduced motion turning on behaves like pause but shows the first phrase; turning off resumes from the displayed phrase with a 2s hold unless the user had pressed pause. Pause state persists across reduced-motion changes within the page load.
 
 #### 4.2.3 Pause control
-- A `<button>` reading `[ pause motion ]` / `[ resume motion ]`, `--text-muted`, small mono text, with `aria-pressed`, at the top-right of the hero content, first in DOM.
-- When pressed: the typed phrase behaves per §4.2.2; the cursor stops blinking; the effect is **not** affected — the author confirmed the control does not stop the gradient. **Rationale:** the ground assembles and then holds (no constant churn), so it is not continuously moving content; the control exists for the typed phrase and cursor. Acceptance (§8) verifies the ground settles to a still within 5 seconds of load; if it does not, that is a doc question, not a silent pass.
+- A `<button>` reading `[ pause motion ]` / `[ resume motion ]` (brackets drawn in CSS, because the kit flags bracketed text as unfinished content), `--text-muted`, small mono text, with `aria-pressed`, at the right of the terminal window's title bar.
+- When pressed: the typed phrase behaves per §4.2.2; the cursor stops blinking; the gradient is **not** affected — the author confirmed this control does not stop it. The gradient has its own kit pause disc (§4.2.1), so both moving things can be stopped. The two controls are separate by design.
 - Per page load (not persisted). Hidden while reduced motion is on.
 
 ### 4.3 Projects
 - `<section id="projects">`, heading `> projects`, on the plain page ground.
+- This section **grows with its content** (open cards make it taller) instead of keeping the kit's fixed one-or-two-screens height, which would clip an open card on wide screens. Known and accepted deviation from the kit's rhythm rule (§8).
 - Grid of cards: **1 column on mobile, 2 on desktop**, `align-items: start`. Count = whatever the content file holds (1 to ~12), in file order.
 - **Card** (one style site-wide, kit card look, sharp radius, hover lifts 2px and the border becomes `--border-strong`): same structure as v0.6 — a **terminal-window frame** (28px title bar with three dots and `project.displayUrl`, or `~/{id}` when absent; the bar is `aria-hidden`) over a fixed **16:10** screenshot (`width=1200 height=750`, `loading="lazy"`, alt from content, `--bg` placeholder panel with the title when there is no image); then the header-row toggle button, summary, static tech tags, and the expandable details panel.
 - Toggle and panel behaviour is unchanged from v0.6: `<h3><button aria-expanded aria-controls>` is the only accessible toggle (index `01`, title, `[+]`/`[−]`); clicking the frame also toggles (mouse only, not focusable); the details panel animates with `grid-template-rows 0fr → 1fr` (≤200ms, instant under reduced motion), the inner element has `overflow: hidden; min-height: 0`, and `inert` while collapsed; details: Problem, My contribution, Outcome, optional Highlights, then Source (GitHub) and Live demo links. Multiple cards may be open.
@@ -181,13 +181,13 @@ The kit chooses its parts by script, not by taste, so the result is recorded her
 - The moment is initialised once after React renders; it must tolerate React StrictMode's double mount.
 
 ### 4.4 GitHub Activity
-Specification unchanged from v0.6 — heading `> activity`, total line, focusable scroll container, SVG calendar with weekday placement, `level-0…4` classes, native `<title>` tooltips, month labels with the collision rule, weekday labels, SVG legend, "Updated" note, "View on GitHub" link, `unavailable` fallback — with these changes: the section sits on the kit's `bg-dots` ground (dots in the margins only, never behind the calendar), and the calendar and total use the new fonts (calendar labels in JetBrains Mono).
+Specification unchanged from v0.6 — heading `> activity`, total line, focusable scroll container, SVG calendar with weekday placement, `level-0…4` classes, native `<title>` tooltips, month labels with the collision rule, weekday labels, SVG legend, "Updated" note, "View on GitHub" link, `unavailable` fallback — with these changes: the section sits on the kit's `bg-dots` ground (dots in the margins only, never behind the calendar); from 1024px the total is shown as a large accent-coloured figure beside the calendar (`1,234` with `contributions in the last year` under it), stacked above it below that; the section is at least one screen tall; calendar labels use JetBrains Mono. The visible text still reads `1,234 contributions in the last year`.
 
 ### 4.5 Contact (closing section)
-- `<section id="contact">`, the kit's `close-word` closing: the heading `> contact` set very large as the section's word, one short inviting line, then the three links, each with icon **and the actual value as visible, selectable text** (email `mailto:`, LinkedIn display URL, `github.com/<username>`). Plain page ground. Accepted spam-scraping risk unchanged.
+- **Contact and Footer are one element**: the kit's `footer.closing#contact` (the close and the directory are a single last screen), on the lit ground (`footer--statement`). §4.5 is its first row and §4.6 its second. Its first row is the kit's `close-word` closing: the heading `> contact` and one short inviting line beside a primary **Email me** button, then **the author's name** set across the full width in the display face (the kit's "word"; its size is computed from the page width and the length of the name, because the kit sizes it for short names and would clip a long one). The three contact links, each with icon **and the actual value as visible, selectable text** (email `mailto:`, LinkedIn display URL, `github.com/<username>`), are in the second row's Contact column. Accepted spam-scraping risk unchanged.
 
 ### 4.6 Footer
-- The kit's `footer-statement`: the last typed phrase (`site.typedPhrases` last item, currently `I build.`) set large as the statement, then `© <current year> <name>` and a "source" link to `site.sourceRepoUrl`.
+- Second row of the closing element: the logo and the last typed phrase (`site.typedPhrases` last item, currently `I build.`) as the lede; a Contact column (§4.5); a Sections column (Projects, Case study, Activity); then `© <current year> <name>` and a "source" link to `site.sourceRepoUrl`.
 
 ### 4.7 External links (all sections)
 Unchanged: every `http(s)` link leaving the site and the Résumé link uses `target="_blank" rel="noopener noreferrer"` plus visually-hidden "(opens in a new tab)". `mailto:` links are exempt.
@@ -284,16 +284,16 @@ Unchanged from v0.6. The redesign is developed on the branch `redesign/terminal-
 ## 8. Acceptance criteria
 v1 (redesign) is done when:
 1. `npm run lint`, `npm run typecheck` and `npm run build` pass on a fresh clone with no token set.
-2. Every section in §4 is present and behaves as specified, including keyboard operation, the pause control, the case-study fallbacks, and the hero ground settling to a still within 5 seconds of load.
+2. Every section in §4 is present and behaves as specified, including keyboard operation, both pause controls (the title-bar button and the kit's disc) and the case-study fallbacks.
 3. None of the exclusions in §3.1 appear; the matrix rain code is gone.
 4. With a valid token the calendar renders; with no token the fallback renders; with an invalid token the build fails.
 5. The contribution total matches `github.com/remyj4556`; if not, that is a doc change.
-6. The kit's checkers (copy lint, layout check at 1440/1024/820/768/390, consistency, performance, finish gate) run clean on the built page, except findings caused by the placeholder content of §9, which are listed in the report and re-run when the real content arrives. Any waiver is recorded with its reason.
+6. The kit's checkers (copy lint, layout check at 1440/1024/820/768/390, consistency, performance, finish gate) run on the built page. Findings are fixed unless they fall in one of these **accepted waivers**, each with its reason: (a) caused by the placeholder content of §9 (solid-colour screenshots, lorem text, the unavailable-activity fallback without a token) — re-run when real content arrives; (b) the kit's one-or-two-screens-per-section rule on the Projects section, which grows with open cards (§4.3), and the section starts that follow from it; (c) `#root` — React's mount element sits above the header (the page is client-rendered; it does not change the visible structure); (d) card interior text not on the container's left lines and the card frame's hairline — bordered, padded cards are part of the design; (e) the h1 being a personal name rather than a product description, and `> prompt` headings — the terminal conceit (§3); (f) the analytics script 404 outside Vercel (§5.1: it only runs there).
 7. Lighthouse targets in §6 are met on the deployed preview.
 8. **The author reviews screenshots** at 1440px and 390px, including one project card expanded and the case study mid-scroll. Deviations from this doc are fixed; requests that change the design go through the doc process first.
 
 ## 9. Placeholder content
-As in v0.6 (four sample projects, one without an image, one without links, one without `displayUrl`; placeholder intro, résumé, `og-image.png`, `apple-touch-icon.png`), plus: the first project carries three `walkthroughImages` as solid-colour 1200×750 WebP. The author has said real content comes later; the layout must hold with the placeholders, and replacing them requires editing only `src/content/` and `public/`.
+As in v0.6 (four sample projects, one without an image, one without links, one without `displayUrl`; placeholder intro, résumé, `og-image.png`, `apple-touch-icon.png`), plus: the first project carries three `walkthroughImages`: 1200×750 WebP panels of abstract UI blocks (a list, code lines, a chart) in the site's greens, with no text, so the case study's crossfade is visible. The author has said real content comes later; the layout must hold with the placeholders, and replacing them requires editing only `src/content/` and `public/`.
 
 ## 10. Open questions
 Resolved by the author (first draft):
@@ -302,9 +302,10 @@ Resolved by the author (first draft):
 3. **Case study duplicates card text** — accepted; the first project's card keeps its details panel.
 4. **Pausing the effect** — the pause control does not stop the gradient (§4.2.3).
 
-Still open (for goldfish and the coder):
-5. **React and the kit.** Is "kit scripts run once after React renders" (§5.1) workable for the effect and moment, or does it need a different integration? Answered by a spike before the rest is built; if it fails, stop and return to this doc.
-6. **Does the gradient settle?** §8 requires the ground to settle to a still within 5 seconds; confirm against the real effect, since the pause control does not cover it.
+5. **React and the kit** — resolved: the kit's scripts are imported once, after a synchronous first render (`flushSync`), from `main.tsx`; the effect, the scroll moment and the menu all initialise. React must not re-render elements the kit manages: the header, the case study and the hero art hold no state.
+6. **Does the gradient settle** — superseded: the effect is tuned to near-rest and the kit's own pause disc stops it (§4.2.1), so no settling requirement is imposed.
+
+Still open: none.
 
 ## 11. Revision log
 - **v0.1** — Initial draft.
@@ -313,4 +314,4 @@ Still open (for goldfish and the coder):
 - **v0.4** — Goldfish round 1: static role; WCAG 2.2.2 pause control; rain and typing fully specified; accessible card toggle and panel; calendar spec and data schema; metadata from `site.ts`; build fails on token errors; Vercel Cron refresh; tooling pinned.
 - **v0.5** — Added Vercel Web Analytics.
 - **v0.6** — Goldfish round 2: CSS cursor and SVG legend (glyphs missing from font subset); fonts committed as files and preloaded (dropped `@fontsource` dependency); header `fixed` with hero padding (sticky pushed hero below the fold); rain uses ResizeObserver and only reinitialises on column change, reads tokens via `getComputedStyle`, hard-clears columns on restart, continues on resume; strict GraphQL failure rules; `weekday` added to schema for row placement; scrollable calendar region focusable; `color-scheme: dark`; type/spacing/radius scale; pause/resume and reduced-motion semantics; pause control first in hero; mobile menu panel spec and focus behaviour; logo accessible name; dropped equal-card-height claim; month-label collision rule, pinned en-US date/number formats, CSS-class fills, calendar `role="img"`; "Updated <date>" note; LinkedIn display derived; `mailto:` exempt from new-tab rule; real TS types with `satisfies` and non-empty `typedPhrases`; derived URLs; dev-only project id validation; decorative frame parts `aria-hidden`; `min-height: 0` for collapse; React 19 pinned; token scoped to Production + Preview; cron handler signature, GET, constant-time compare, imprecise timing; contribution total check added to acceptance; Node scripts linted with `@ts-check`; tsconfig include for plugin imports; dev-server restart note; screenshots 1200×750 ≤150KB; 404 page, apple-touch-icon, theme-color, robots.txt; hover and selection colours; `--cal-0` lightened and claim softened; scroll-margin corrected.
-- **v0.7** — "Terminal-pop" redesign experiment (branch `redesign/terminal-pop`): restraint replaced by one committed concept with a fixed motion budget; matrix rain removed in favour of a `grain-gradient` ground behind a hero terminal window (typed phrase moved into it); hero layout `collage`; Manrope added beside JetBrains Mono (both self-hosted); design kit adopted as the styling layer (partial copy into `public/assets/`); new Case study section with a `pinned-chapters` moment and `Project.walkthroughImages`; dealt nav, close, footer, buttons and grounds recorded in §3.7; exclusions revised (gradients only on named grounds; no glass, no violet); kit checkers added to acceptance; open questions recorded in §10. Author decisions applied: gradient ban lifted for the two named grounds, proportional type accepted, case-study text duplication accepted, pause control does not stop the gradient.
+- **v0.7** — "Terminal-pop" redesign experiment (branch `redesign/terminal-pop`): restraint replaced by one committed concept with a fixed motion budget; matrix rain removed in favour of a `grain-gradient` ground behind a hero terminal window (typed phrase moved into it); hero layout `collage`; Manrope added beside JetBrains Mono (both self-hosted); design kit adopted as the styling layer (partial copy into `public/assets/`); new Case study section with a `pinned-chapters` moment and `Project.walkthroughImages`; dealt nav, close, footer, buttons and grounds recorded in §3.7; exclusions revised (gradients only on named grounds; no glass, no violet); kit checkers added to acceptance; open questions recorded in §10. Author decisions applied: gradient ban lifted for the two named grounds, proportional type accepted, case-study text duplication accepted, pause control does not stop the gradient. Implementation findings folded in: pause control moved into the terminal title bar; kit pause disc covers the gradient; `--text-muted` lightened; Contact and Footer merged into the kit's single closing element; footer name sized from the page width; Projects and Activity sections grow past the kit's fixed screen height; waivers listed in §8.

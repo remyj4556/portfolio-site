@@ -7,6 +7,11 @@ export const projects = [
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.',
     tech: ['TypeScript', 'React', 'Node.js', 'PostgreSQL'],
     image: { src: '/projects/project-alpha.webp', alt: 'Screenshot of Project Alpha' },
+    walkthroughImages: [
+      { src: '/projects/project-alpha-problem.webp', alt: 'Screenshot of the list view in Project Alpha' },
+      { src: '/projects/project-alpha-contribution.webp', alt: 'Screenshot of the code behind Project Alpha' },
+      { src: '/projects/project-alpha-outcome.webp', alt: 'Screenshot of the results chart in Project Alpha' },
+    ],
     displayUrl: 'alpha.example.com',
     links: {
       source: 'https://github.com/your-username/project-alpha',
