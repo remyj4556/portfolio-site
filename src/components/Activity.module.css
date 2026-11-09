@@ -1,15 +1,55 @@
-.total {
-  margin-bottom: var(--space-4);
+/* One screen, never clipped if the calendar needs more room. The kit's ground classes set their own
+   min-height (specificity 0,3,0), so this repeats the local class to win it. */
+main > section.section.section.section {
+  height: auto;
+  min-height: 100svh;
+}
+
+main > section.section.section.section > :global(.wrap) {
+  height: auto;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-7);
+  }
+
+  .stat {
+    flex: 0 0 280px;
+  }
+}
+
+.number {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-size: var(--t-stat);
+  line-height: 1.05;
+  letter-spacing: var(--display-tracking);
+  color: var(--p-accent);
+}
+
+.label {
+  margin-top: var(--space-2);
+  color: var(--text-muted);
 }
 
 .scroller {
+  min-width: 0;
   overflow-x: auto;
   padding-bottom: var(--space-2);
   border-radius: var(--radius-sm);
 }
 
 .meta {
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
   font-size: var(--text-sm);
   color: var(--text-muted);
 }

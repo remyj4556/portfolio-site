@@ -6,7 +6,7 @@ export const projects = [
     title: 'Project Alpha',
     summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.',
     tech: ['TypeScript', 'React', 'Node.js', 'PostgreSQL'],
-    image: { src: '/projects/project-alpha.webp', alt: 'Placeholder screenshot of Project Alpha' },
+    image: { src: '/projects/project-alpha.webp', alt: 'Screenshot of Project Alpha' },
     displayUrl: 'alpha.example.com',
     links: {
       source: 'https://github.com/your-username/project-alpha',
@@ -40,7 +40,7 @@ export const projects = [
     title: 'Project Gamma',
     summary: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla.',
     tech: ['Python', 'FastAPI', 'Redis', 'WebSockets', 'AWS'],
-    image: { src: '/projects/project-gamma.webp', alt: 'Placeholder screenshot of Project Gamma' },
+    image: { src: '/projects/project-gamma.webp', alt: 'Screenshot of Project Gamma' },
     displayUrl: 'gamma.example.com',
     problem: 'Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac.',
     contribution: 'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo.',
@@ -52,7 +52,7 @@ export const projects = [
     title: 'Project Delta',
     summary: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.',
     tech: ['Rust', 'WebAssembly', 'Svelte'],
-    image: { src: '/projects/project-delta.webp', alt: 'Placeholder screenshot of Project Delta' },
+    image: { src: '/projects/project-delta.webp', alt: 'Screenshot of Project Delta' },
     links: {
       source: 'https://github.com/your-username/project-delta',
       demo: 'https://delta.example.com',

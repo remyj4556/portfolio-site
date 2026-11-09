@@ -6,6 +6,14 @@
   transition: color var(--transition);
 }
 
+.toggle::before {
+  content: '[ ';
+}
+
+.toggle::after {
+  content: ' ]';
+}
+
 .toggle:hover {
   color: var(--text);
 }

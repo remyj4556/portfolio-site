@@ -1,3 +1,14 @@
+/* Cards expand in place, so this section grows with its content instead of keeping the kit's
+   fixed screen height (which would clip an open card on wide screens). */
+main > section.section {
+  height: auto;
+  min-height: 100svh;
+}
+
+main > section.section > :global(.wrap) {
+  height: auto;
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr;

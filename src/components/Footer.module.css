@@ -1,7 +1,43 @@
-.footer {
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-6);
-  border-top: 1px solid var(--border);
-  font-size: var(--text-sm);
-  color: var(--text-muted);
+/* The kit sizes this word for short names (8 letters fill the page); the author's name is longer,
+   so the size is taken from the page width and the length of the name (about 5.3em at this tracking). */
+footer .word {
+  font-size: calc(min(var(--container), 100vw - 2 * var(--gut)) / 5.5);
+  line-height: 1.04;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  overflow-wrap: anywhere;
+}
+
+.link svg {
+  flex-shrink: 0;
+}
+
+/* Under 1024px the 12 columns are narrow: give the contact values room so an address never breaks mid-word. */
+@media (max-width: 1023px) {
+  footer .contactCol {
+    grid-column: 1 / span 7;
+  }
+
+  footer .sectionsCol {
+    grid-column: 8 / span 5;
+  }
+}
+
+@media (max-width: 639px) {
+  footer .contactCol,
+  footer .sectionsCol {
+    grid-column: 1 / -1;
+  }
 }

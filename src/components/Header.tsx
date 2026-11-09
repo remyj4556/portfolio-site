@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState, type FocusEvent, type KeyboardEvent } from 'react'
 import { site } from '../content/site.ts'
 import { ExternalLink } from './ExternalLink.tsx'
-import styles from './Header.module.css'
 
 const NAV_LINKS = [
   { href: '#projects', label: 'Projects' },
@@ -9,69 +7,41 @@ const NAV_LINKS = [
   { href: '#contact', label: 'Contact' },
 ]
 
+// Layout kit "nav-centre" bar. The kit's script owns the mobile sheet: it flips aria-expanded
+// on the toggle and opens or closes the sheet, so no menu state lives here.
 export function Header() {
-  const [open, setOpen] = useState(false)
-  const headerRef = useRef<HTMLElement>(null)
-  const buttonRef = useRef<HTMLButtonElement>(null)
-
-  // Close on a click outside the header.
-  useEffect(() => {
-    if (!open) return
-    function onPointerDown(event: PointerEvent) {
-      if (!headerRef.current?.contains(event.target as Node)) setOpen(false)
-    }
-    document.addEventListener('pointerdown', onPointerDown)
-    return () => document.removeEventListener('pointerdown', onPointerDown)
-  }, [open])
-
-  function onKeyDown(event: KeyboardEvent) {
-    if (open && event.key === 'Escape') {
-      setOpen(false)
-      buttonRef.current?.focus()
-    }
-  }
-
-  // Close when focus leaves the header (e.g. tabbing past the last link).
-  function onBlur(event: FocusEvent) {
-    if (open && !headerRef.current?.contains(event.relatedTarget as Node | null)) setOpen(false)
-  }
-
   return (
-    <header ref={headerRef} className={styles.header} onKeyDown={onKeyDown} onBlur={onBlur}>
-      <div className={styles.bar}>
-        <a href="#top" className={styles.logo} aria-label={`${site.firstName}, back to top`}>
-          <span className={styles.bracket} aria-hidden="true">&lt;</span>
-          <span className={styles.logoName}>{site.firstName}</span>
-          <span className={styles.bracket} aria-hidden="true"> /&gt;</span>
+    <header className="nav nav--centre">
+      <div className="wrap nav__bar">
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
+        <a className="nav__logo" href="#top" aria-label={`${site.firstName}, back to top`}>
+          <span className="mark" data-mark="ring" aria-hidden="true" />
+          {site.firstName}
         </a>
 
-        <nav className={styles.nav} aria-label="Primary">
-          <button
-            ref={buttonRef}
-            type="button"
-            className={styles.menuButton}
-            aria-expanded={open}
-            aria-controls="site-menu"
-            onClick={() => setOpen((value) => !value)}
-          >
-            {open ? 'close' : 'menu'}
-          </button>
-
-          <ul id="site-menu" className={`${styles.links} ${open ? styles.open : ''}`} onClick={() => setOpen(false)}>
-            {NAV_LINKS.map(({ href, label }) => (
-              <li key={href}>
-                <a href={href} className={styles.navLink}>
-                  {label}
-                </a>
-              </li>
-            ))}
-            <li>
-              <ExternalLink href={site.resumePath} className={styles.resume}>
-                Résumé
-              </ExternalLink>
-            </li>
-          </ul>
+        <nav className="nav__links" aria-label="Main">
+          {NAV_LINKS.map(({ href, label }) => (
+            <div className="nav__item" key={href}>
+              <a className="nav__link" href={href}>
+                {label}
+              </a>
+            </div>
+          ))}
         </nav>
+
+        <div className="nav__actions">
+          <ExternalLink href={site.resumePath} className="btn btn--primary">
+            Résumé
+          </ExternalLink>
+        </div>
+
+        <button className="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+            <path d="M2 5h14M2 13h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        </button>
       </div>
     </header>
   )

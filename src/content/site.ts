@@ -13,7 +13,7 @@ export const site = {
     'I build.',
   ],
   intro:
-    'This is a placeholder introduction. Replace it with two or three sentences about what you build, what you care about, and the kind of role you are looking for.',
+    'Two or three sentences go here about what I build, what I care about, and the kind of role I am looking for.',
   resumePath: '/Remy-Jarrett-Resume.pdf',
   resumeSourceUrl: 'https://raw.githubusercontent.com/remyj4556/resume/main/RemingtonJarrett_Resume.pdf',
   email: 'remyj2004@gmail.com',

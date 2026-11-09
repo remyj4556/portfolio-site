@@ -1,4 +1,5 @@
 import { StrictMode } from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import './styles/global.css'
 import App from './App.tsx'
@@ -17,8 +18,15 @@ if (import.meta.env.DEV) {
   }
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+flushSync(() => {
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  )
+})
+
+// The layout kit enhances elements by class and data attribute (menu, effect, scroll moment), so it
+// loads once, after React has put those elements in the page. Imported at runtime from public/assets.
+const kit = (path: string) => import(/* @vite-ignore */ `/assets/${path}`)
+void Promise.all([kit('system.js'), kit('motion/motion.js'), kit('layout/layout.js')])

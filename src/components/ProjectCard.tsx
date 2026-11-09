@@ -23,7 +23,7 @@ export function ProjectCard({ project, index }: Props) {
             <span className={styles.index}>{String(index).padStart(2, '0')}</span>
             <span className={styles.titleText}>{project.title}</span>
             <span className={styles.indicator} aria-hidden="true">
-              {open ? '[−]' : '[+]'}
+              {open ? '−' : '+'}
             </span>
           </button>
         </h3>

@@ -20,6 +20,7 @@ export type Project = {
   summary: string;          // shown collapsed
   tech: string[];
   image?: { src: string; alt: string };   // 1200×750 WebP in public/projects/, ≤150KB
+  walkthroughImages?: { src: string; alt: string }[]; // up to 3, in step order (Problem, My contribution, Outcome); same format as image
   displayUrl?: string;      // shown in the browser-frame bar
   links?: { source?: string; demo?: string };
   problem: string;

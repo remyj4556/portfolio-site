@@ -14,7 +14,7 @@ export function BrowserFrame({ project, onClick }: Props) {
           <span />
           <span />
         </span>
-        {project.displayUrl && <span className={styles.url}>{project.displayUrl}</span>}
+        <span className={styles.url}>{project.displayUrl ?? `~/${project.id}`}</span>
       </div>
       <div className={styles.screen}>
         {project.image ? (

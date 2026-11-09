@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-type="software" data-radius="sharp" data-ground="sage" data-buttons="solid" data-motion>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>%SITE_TITLE%</title>
     <meta name="description" content="%SITE_DESCRIPTION%" />
     <link rel="canonical" href="%SITE_URL%/" />
+    <meta name="site-kind" content="software" />
+    <meta name="page-type" content="software" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="%SITE_TITLE%" />
@@ -18,8 +20,31 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0a0e0a" />
 
+    <link rel="preload" href="/fonts/manrope-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/jetbrains-mono-latin-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/jetbrains-mono-latin-700.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Layout kit, in this order. The palette and fonts come from src/styles/tokens.css, which loads after. -->
+    <link rel="stylesheet" href="/assets/system.css" />
+    <link rel="stylesheet" href="/assets/ui/cards.css" />
+    <link rel="stylesheet" href="/assets/motion/motion.css" />
+    <link rel="stylesheet" href="/assets/backgrounds/backgrounds.css" />
+    <link rel="stylesheet" href="/assets/layout/layout.css" />
+    <link rel="stylesheet" href="/assets/icons/icon.css" />
+
+    <!-- The hero's words wait for the entrance instead of flashing; the timeout is the fallback. -->
+    <script>
+      document.documentElement.classList.add('m-enter')
+      setTimeout(() => document.documentElement.classList.add('m-enter-done'), 700)
+    </script>
+    <script src="/assets/backgrounds/backgrounds.js"></script>
+    <script>
+      document.documentElement.classList.add('mo-js')
+      setTimeout(() => document.documentElement.classList.add('mo-safe'), 2500)
+    </script>
+    <link rel="modulepreload" href="/assets/moments/moments.js" />
+    <link rel="modulepreload" href="/assets/moments/lib.js" />
+    <link rel="modulepreload" href="/assets/moments/pinned-chapters/moment.js" />
   </head>
   <body>
     %NOSCRIPT%

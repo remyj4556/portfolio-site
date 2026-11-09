@@ -1,27 +1,60 @@
+/* Palette, fonts and radius for the layout kit (public/assets). Loaded after the kit's stylesheets.
+   The kit derives --bg, --surface, --ink, --muted, --accent and --line from the --p-* values. */
 :root {
-  /* Colour */
-  --bg: #0a0e0a;
-  --surface: #0f1a12;
-  --border: #1f3326;
-  --border-strong: #4a7058;
-  --text: #d4e4d8;
-  --text-muted: #8aa394;
-  --accent: #00ff41;
+  --p-bg: #0a0e0a;
+  --p-surface: #0f1a12;
+  --p-ink: #d4e4d8;
+  --p-muted: #9ab5a4;
+  --p-accent: #00ff41;
+  --p-accent-ink: #0a0e0a;
+  --p-action: #00ff41;
+  --p-action-ink: #0a0e0a;
+  --p-inv-bg: #d4e4d8;
+  --p-inv-surface: #c4d3c7;
+  --p-inv-ink: #0a0e0a;
+  --p-inv-muted: #4d554e;
+  --p-inv-accent: #0a0e0a;
+  --p-inv-accent-ink: #d4e4d8;
+  --p-inv-action: #0a0e0a;
+  --p-inv-action-ink: #d4e4d8;
+
+  --font-display: 'Manrope', system-ui, sans-serif;
+  --font-text: 'Manrope', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --display-weight: 500;
+  --display-tracking: -0.035em;
+  --display-tracking-xl: -0.045em;
+  --ly-scale: 0.97;
+
+  /* Contribution calendar levels 0 (none) to 4 (most). */
   --cal-0: #243a2c;
   --cal-1: #0b4d1c;
   --cal-2: #087a26;
   --cal-3: #00b82e;
   --cal-4: #00ff41;
+}
 
-  /* Type */
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+/* The lit ground behind the hero's terminal window: the page's own greens instead of the kit's sage. */
+html[data-ground='sage'] {
+  --ground-bg: #12301c;
+  --ground-surface: #0f1a12;
+  --ground-ink: #d4e4d8;
+  --ground-muted: #8aa394;
+  --ground-accent: #00ff41;
+}
+
+/* Names used by the component stylesheets, mapped onto the kit's tokens. */
+:root {
+  --text: var(--p-ink);
+  --text-muted: var(--p-muted);
+  --border: #1f3326;
+  --border-strong: #4a7058;
+
   --text-xs: 12px;
   --text-sm: 14px;
   --text-base: 16px;
   --text-lg: 20px;
-  --text-xl: clamp(1.5rem, 4vw, 2rem);
 
-  /* Space */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -29,26 +62,10 @@
   --space-5: 24px;
   --space-6: 32px;
   --space-7: 48px;
-  --space-8: 96px;
 
-  /* Shape */
-  --radius: 8px;
-  --radius-sm: 4px;
-
-  /* Layout */
-  --header-h: 56px;
-  --header-inset: 12px;
-  --content-max: 1100px;
-  --gutter: 16px;
-  --section-pad: 64px;
+  --radius: var(--r-lg);
+  --radius-sm: var(--r-sm);
   --transition: 200ms ease;
-}
-
-@media (min-width: 768px) {
-  :root {
-    --gutter: 24px;
-    --section-pad: var(--space-8);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

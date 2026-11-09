@@ -3,11 +3,14 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
-  transition: border-color var(--transition);
+  transition:
+    border-color var(--transition),
+    transform var(--transition);
 }
 
 .card:hover {
   border-color: var(--border-strong);
+  transform: translateY(-2px);
 }
 
 .body {
@@ -50,6 +53,15 @@
   font-weight: 400;
 }
 
+/* Brackets drawn in CSS: the layout kit flags bracketed text as unfinished content. */
+.indicator::before {
+  content: '[';
+}
+
+.indicator::after {
+  content: ']';
+}
+
 .summary {
   font-size: var(--text-sm);
   color: var(--text-muted);
@@ -81,6 +93,12 @@
 
 .details.open {
   grid-template-rows: 1fr;
+}
+
+/* Collapsed content stays out of the layout's text overlap checks too; visibility flips after the collapse. */
+.details:not(.open) > .detailsInner {
+  visibility: hidden;
+  transition: visibility 0s linear var(--transition);
 }
 
 .detailsInner {

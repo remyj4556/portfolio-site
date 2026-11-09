@@ -1,0 +1,75 @@
+.window {
+  background: var(--p-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  /* The frame cuts the window at its right and bottom: keep the text clear of the cut. */
+  padding-right: var(--ly-cut-room, 0);
+}
+
+.bar {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  /* Taller than the frame on small screens: the frame cuts the bottom. */
+  min-height: 680px;
+}
+
+.command {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--text);
+}
+
+.prompt {
+  color: var(--p-accent);
+  font-weight: 700;
+}
+
+.output {
+  margin: 0 0 var(--space-3);
+  color: var(--text-muted);
+  max-width: 62ch;
+}
+
+.typed {
+  flex: 1;
+  color: var(--p-accent);
+}
