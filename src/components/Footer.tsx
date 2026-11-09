@@ -10,7 +10,7 @@ export function Footer() {
   const statement = site.typedPhrases[site.typedPhrases.length - 1]
 
   return (
-    <footer className="footer closing footer--statement" id="contact" aria-labelledby="close-h">
+    <footer className={`footer closing footer--statement ${styles.footer}`} id="contact" aria-labelledby="close-h">
       <div className="wrap">
         <div className="closing__cta close--word">
           <div className="section-head--split">
@@ -79,7 +79,7 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="footer__legal">
+          <div className={`footer__legal ${styles.legal}`}>
             <span>
               © {new Date().getFullYear()} {site.name}
             </span>

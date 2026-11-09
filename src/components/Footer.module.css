@@ -1,3 +1,21 @@
+/* The kit locks this footer to exactly one screen and sizes its first row with minmax(0, 1fr), so on a
+   screen shorter than the content (a 1440x700 window, say) the close, with the big name, shrinks below its
+   content and the name overlaps the links. The footer may instead grow past one screen, and its first row
+   never shrinks below what it holds; the kit's own row gap keeps the name and the links apart. */
+footer:global(.closing).footer {
+  height: auto;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* flex: 1 0 auto fills the screen when there is room (the links stay at the foot) and grows when there is not. */
+footer:global(.closing).footer > :global(.wrap) {
+  flex: 1 0 auto;
+  height: auto;
+  grid-template-rows: minmax(min-content, 1fr) auto;
+}
+
 /* The kit sizes this word for short names (8 letters fill the page); the author's name is longer,
    so the size is taken from the page width and the length of the name (about 5.3em at this tracking). */
 footer .word {
@@ -24,20 +42,26 @@ footer .word {
   flex-shrink: 0;
 }
 
-/* Under 1024px the 12 columns are narrow: give the contact values room so an address never breaks mid-word. */
+/* Under 1024px the 12 columns are narrow: give the contact values room so an address never breaks mid-word.
+   The local class is doubled to beat the kit's own phone rule for footer columns (0,2,0). */
 @media (max-width: 1023px) {
-  footer .contactCol {
+  footer .contactCol.contactCol {
     grid-column: 1 / span 7;
   }
 
-  footer .sectionsCol {
+  footer .sectionsCol.sectionsCol {
     grid-column: 8 / span 5;
   }
 }
 
 @media (max-width: 639px) {
-  footer .contactCol,
-  footer .sectionsCol {
+  footer .contactCol.contactCol,
+  footer .sectionsCol.sectionsCol {
     grid-column: 1 / -1;
   }
+}
+
+/* The kit gives phone footer links a 44px minimum height, which drops "source" below the © line. */
+footer .legal.legal {
+  align-items: center;
 }
