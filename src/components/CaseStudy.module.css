@@ -1,3 +1,18 @@
+/* The kit's ground class (bg-halo) makes the section a grid with its content centred and padded. The
+   pinned stage is sticky and one screen tall inside a two-screen section: a grid parent confines a sticky
+   child to its own row, and centring (which Chrome also applies to block containers) pushes the stage
+   450px down, so the hold collapses. A block parent with content at the start, and no padding while the
+   moment is live (the moment's own rule, which this ground's padding outranks), restores the full
+   two-screen hold. The local class is repeated to beat the ground rule's specificity (0,3,0). */
+main > section.section.section.section {
+  display: block;
+  align-content: start;
+}
+
+main > section.section.section.section:global(.is-live) {
+  padding: 0;
+}
+
 .placeholder {
   height: 100%;
   min-height: 160px;

@@ -14,7 +14,7 @@ export function CaseStudy() {
   ]
 
   return (
-    <section id="case-study" className="section bg-halo" data-moment="pinned-chapters" aria-labelledby="case-study-h">
+    <section id="case-study" className={`section bg-halo ${styles.section}`} data-moment="pinned-chapters" aria-labelledby="case-study-h">
       <div className="wrap mo-pc__grid">
         <div className="mo-pc__text">
           <h2 id="case-study-h" className="prompt-heading">

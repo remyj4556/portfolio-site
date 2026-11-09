@@ -6,12 +6,10 @@
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   line-height: 1.6;
-  /* The frame cuts the window at its right and bottom: keep the text clear of the cut. */
-  padding-right: var(--ly-cut-room, 0);
 }
 
 .bar {
-  height: 28px;
+  min-height: 28px;
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -47,8 +45,6 @@
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-4);
-  /* Taller than the frame on small screens: the frame cuts the bottom. */
-  min-height: 680px;
 }
 
 .command {
@@ -72,4 +68,23 @@
 .typed {
   flex: 1;
   color: var(--p-accent);
+}
+
+/* A roomier window where the frame is tall (desktop); on smaller screens it takes only its content so the
+   hero still fits the first screen. */
+@media (min-width: 1024px) {
+  .body {
+    min-height: 400px;
+  }
+}
+
+/* On a phone the whole hero must fit the first screen, so the window's own spacing tightens. */
+@media (max-width: 639px) {
+  .body {
+    padding: var(--space-3);
+  }
+
+  .output {
+    margin-bottom: var(--space-2);
+  }
 }

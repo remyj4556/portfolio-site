@@ -64,7 +64,7 @@ export function Hero() {
           </div>
 
           <div
-            className="hero__art span-6 start-7"
+            className={`hero__art span-6 start-7 ${styles.art}`}
             data-fx="grain-gradient"
             data-fx-seed="7"
             data-fx-params='{"speed":0.15,"grainMotion":0}'
