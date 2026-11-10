@@ -1,6 +1,6 @@
 # DESIGN.md — Portfolio Site
 
-**Status:** v0.7 — "terminal-pop" redesign, implemented on branch `redesign/terminal-pop` (goldfish review skipped by the author for this experiment). Decisions from the first draft applied (§10); deviations found while building are recorded in the sections they affect and in §8. Supersedes the visual direction of v0.6; everything not mentioned here is unchanged from v0.6.
+**Status:** v0.7 — "terminal-pop" redesign, implemented and merged to `main` (goldfish review skipped by the author for this experiment). Decisions from the first draft applied (§10); deviations found while building are recorded in the sections they affect and in §8. Supersedes the visual direction of v0.6; everything not mentioned here is unchanged from v0.6.
 **Owner:** the site's author (referred to as "the author").
 
 This document is the single source of truth for the project. It is written to be read with no other context.
@@ -185,7 +185,19 @@ The kit chooses its parts by script, not by taste, so the result is recorded her
 - **Kit conflict, resolved:** the section's `bg-halo` ground makes it a centred, padded grid, which confines the sticky one-screen stage to its own row and pushes it 450px down, collapsing the two-screen hold. The section is therefore a block container with its content at the start and no padding while the moment is live, so the stage pins for the full two screens (verified: pinned across 900px of scroll, steps 1 → 2 → 3).
 
 ### 4.4 GitHub Activity
-Specification unchanged from v0.6 — heading `> activity`, total line, focusable scroll container, SVG calendar with weekday placement, `level-0…4` classes, native `<title>` tooltips, month labels with the collision rule, weekday labels, SVG legend, "Updated" note, "View on GitHub" link, `unavailable` fallback — with these changes: the section sits on the kit's `bg-dots` ground (dots in the margins only, never behind the calendar); from 1024px the total is shown as a large accent-coloured figure beside the calendar (`1,234` with `contributions in the last year` under it), stacked above it below that; the section is at least one screen tall; calendar labels use JetBrains Mono. The visible text still reads `1,234 contributions in the last year`.
+- `<section id="activity">` on the kit's `bg-dots` ground (dots in the margins only, never behind the calendar), at least one screen tall; heading `> activity`, then the total: `1,234 contributions in the last year` — formatted with `Intl.NumberFormat('en-US')`, singular "contribution" when the total is 1. From 1024px the figure is large and accent-coloured beside the calendar with the words beneath it; below that it stacks above the calendar. The visible text still reads as one sentence.
+- **Scroll container:** wraps the calendar; `overflow-x: auto`; `tabindex="0"`, `role="region"`, `aria-label="Contribution calendar"`, and the standard focus ring, so keyboard users can scroll it. On mobile it starts scrolled to the right end (most recent weeks).
+- **Calendar:** an SVG grid of week-columns × 7 day-rows, 11px cells with 3px gaps, 2px radius, rendered by our own component.
+  - The `<svg>` has `role="img"` and `aria-label` equal to the total text (e.g. "1,234 contributions in the last year"). Individual cells are not exposed to assistive tech; per-day detail is mouse-only (accepted).
+  - **Row placement:** each day's row is its `weekday` (0 = Sunday … 6 = Saturday, from the data — §5.3), never its index within the week array. Partial first/last weeks therefore render correctly.
+  - **Colour:** each cell gets a CSS class `level-0` … `level-4` mapping to `--cal-0` … `--cal-4` (`fill` set in CSS, not via presentation attributes, since `fill="var(--x)"` doesn't work).
+  - **Tooltips:** each cell has a native SVG `<title>`, e.g. `3 contributions on Oct 29, 2026` / `1 contribution on …` / `No contributions on …`. Dates formatted with `Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' })`.
+  - **Dates:** data dates are `YYYY-MM-DD` strings, parsed as local dates (split the string, `new Date(y, m - 1, d)`), never `new Date("YYYY-MM-DD")`, which parses as UTC and shows the previous day in US timezones.
+  - **Month labels** (`Jan`, `Feb`, …, `--text-xs`) above the week-column where a new month begins (the column's first day is in a different month from the previous column's first day). A label is **skipped** if fewer than 3 columns separate it from the next label, or from the grid's end for the last label — preventing overlaps from partial months.
+  - **Weekday labels** `Mon`, `Wed`, `Fri` (`--text-xs`, JetBrains Mono) left of the grid.
+  - **Legend** below, right-aligned: the text `Less`, five SVG squares (same size and radius as cells) in `--cal-0` … `--cal-4`, then `More`. The legend's SVG is `aria-hidden`.
+- Below the calendar, `--text-sm` `--text-muted`: `Updated Oct 29, 2026` (from `fetchedAt`, same date format) and a "View on GitHub" link to the user's profile.
+- **Fallback:** if data status is `unavailable` (§5.3), the section shows "Contribution activity is unavailable right now." and the GitHub link, instead of the calendar, total, and updated note.
 
 ### 4.5 Contact (closing section)
 - **Contact and Footer are one element**: the kit's `footer.closing#contact` (the close and the directory are a single last screen), on the lit ground (`footer--statement`). §4.5 is its first row and §4.6 its second. Its first row is the kit's `close-word` closing: the heading `> contact` and one short inviting line beside a primary **Email me** button, then **the author's name** set across the full width in the display face (the kit's "word"; its size is computed from the page width and the length of the name, because the kit sizes it for short names and would clip a long one). The three contact links, each with icon **and the actual value as visible, selectable text** (email `mailto:`, LinkedIn display URL, `github.com/<username>`), are in the second row's Contact column. Accepted spam-scraping risk unchanged.
@@ -194,10 +206,11 @@ Specification unchanged from v0.6 — heading `> activity`, total line, focusabl
 - Second row of the closing element: two columns of equal width. **Contact** (§4.5) sits on the left, aligned to the page's left edge; **Sections** (Projects, Case study, Activity) sits on the right half, starting on the same line as the hero terminal's left edge. Below them, `© <current year> <name>` and a "source" link to `site.sourceRepoUrl`. (The row has no logo and no tagline: the author removed the earlier logo-and-"I build." block.) Under 1024px the columns narrow (7/5 of the grid) so addresses never wrap mid-word; on phones they stack.
 
 ### 4.7 External links (all sections)
-Unchanged: every `http(s)` link leaving the site and the Résumé link uses `target="_blank" rel="noopener noreferrer"` plus visually-hidden "(opens in a new tab)". `mailto:` links are exempt.
+- Every `http(s)` link that leaves the site (GitHub, LinkedIn, project links, source repo) and the Résumé link uses `target="_blank" rel="noopener noreferrer"` and includes visually-hidden text "(opens in a new tab)".
+- **Exempt:** `mailto:` links open normally (no `target`, no hidden text).
 
 ### 4.8 404 page
-Unchanged in function: `public/404.html`, standalone, no JavaScript, `> 404`, "This page doesn't exist.", link to `/`. Inline CSS uses the same colours; fonts `/fonts/…` via `@font-face` (JetBrains Mono for the heading, Manrope for the sentence).
+- `public/404.html`: a standalone static page (served by Vercel for unknown paths) with inline CSS using the same colours and fonts (`/fonts/…` via `@font-face`; JetBrains Mono for the heading, Manrope for the sentence): `> 404` heading, "This page doesn't exist.", and a link back to `/`. No JavaScript.
 
 ## 5. Architecture
 
@@ -208,7 +221,11 @@ Unchanged in function: `public/404.html`, standalone, no JavaScript, `> 404`, "T
 - **Runtime dependencies:** `react`, `react-dom`, `@vercel/analytics` — unchanged; the kit is committed files, not an npm dependency. **Dev dependencies:** unchanged (the `react-ts` template set). Any other dependency requires a doc change.
 - **Kit checkers** (copy lint, layout check, consistency, performance, finish gate) are run from the kit's own scripts folder, which lives outside the repository on the author's machine; their working files stay out of git (via `.git/info/exclude`, not `.gitignore`). They are checks, not build steps.
 - **No trace of tooling in tracked files:** kit files copied into the repository are checked for tool or vendor names in comments before commit and stripped if present.
-- **Analytics, Node 24 (`engines`, `.nvmrc`), npm + committed lockfile, linting (Node-globals block for `scripts/**/*.mjs` and `api/**/*.js`, `@ts-check`), TypeScript projects, and the npm scripts table:** unchanged from v0.6.
+- **Analytics:** Vercel Web Analytics via `<Analytics />` from `@vercel/analytics/react`, rendered once in `App.tsx`. Page views only, no custom events. Cookieless, so no consent banner is needed. It only reports on Vercel deployments (no-op locally). Visitors with ad/tracker blockers aren't counted — accepted; the goal is a rough signal that the link is being opened.
+- **Node:** 24 LTS, declared in `package.json` `engines` (`"node": ">=24"`) and `.nvmrc`. Vercel's project Node version set to match.
+- **Package manager:** npm, with `package-lock.json` committed.
+- **Linting:** the template's ESLint config, plus a block for `scripts/**/*.mjs` and `api/**/*.js` with Node globals (via `globals.node`). Those two files also start with `// @ts-check` and use JSDoc types for editor checking; they are **not** part of `tsc -b` (that would need `@types/node`).
+- **TypeScript projects:** `tsconfig.node.json`'s `include` lists `src/content/site.ts` and `src/content/types.ts` alongside `vite.config.ts`, since the Vite plugin imports them (§5.5).
 
 | Script | Command |
 |---|---|
@@ -223,29 +240,98 @@ Unchanged in function: `public/404.html`, standalone, no JavaScript, `> 404`, "T
 | `preview` | `vite preview` |
 
 ### 5.2 Content model
-All author-editable content lives in `src/content/` and `public/`, as in v0.6 (`Site` type unchanged). The `Project` type gains one optional field:
+All author-editable content lives in `src/content/` and `public/`, including page metadata (§5.5), so placeholders can be replaced without touching UI code or `index.html`. The `Project` type has one field added in v0.7 (`walkthroughImages`, §4.3.1):
 
 ```ts
+// src/content/types.ts
+export type Site = {
+  name: string;                         // full name: hero h1, footer, <title>
+  firstName: string;                    // header logo
+  role: string;                         // static role line in hero, <title>
+  description: string;                  // meta / OG description (~150 chars)
+  typedPhrases: [string, ...string[]];  // non-empty, played once in hero (§4.2.2)
+  intro: string;                        // hero paragraph
+  resumePath: `/${string}.pdf`;         // file in public/
+  resumeSourceUrl: string;              // raw PDF URL fetched into resumePath at build time
+  email: string;
+  linkedinUrl: string;                  // full URL
+  githubUsername: string;
+  siteUrl: string;                      // no trailing slash
+  sourceRepoUrl: string;
+};
+
 export type Project = {
-  id: string;               // unique; lowercase letters, digits, hyphens
+  id: string;               // unique; lowercase letters, digits, hyphens; used as React key and in element ids
   title: string;
-  summary: string;
+  summary: string;          // shown collapsed
   tech: string[];
-  image?: { src: string; alt: string };           // 1200×750 WebP in public/projects/, ≤150KB
-  walkthroughImages?: { src: string; alt: string }[]; // NEW: up to 3, step order; same format (§4.3.1)
-  displayUrl?: string;
+  image?: { src: string; alt: string };   // 1200×750 WebP in public/projects/, ≤150KB
+  walkthroughImages?: { src: string; alt: string }[]; // up to 3, in step order (Problem, My contribution, Outcome); same format as image (§4.3.1)
+  displayUrl?: string;      // shown in the browser-frame bar
   links?: { source?: string; demo?: string };
   problem: string;
   contribution: string;
   outcome: string;
   highlights?: string[];
 };
+
+// src/content/site.ts
+export const site = { /* values */ } satisfies Site;
+//   githubUsername: "remyj4556", siteUrl: "https://remyjarrett.dev",
+//   sourceRepoUrl: "https://github.com/remyj4556/portfolio-site"
+
+// src/content/projects.ts
+export const projects = [ /* ... */ ] satisfies Project[];
 ```
 
-Derived values (`derived.ts`), dev-only project-id validation, the résumé filename and the build-time résumé fetch (`fetch-resume.mjs`, soft failure) are unchanged from v0.6.
+- **Derived values** live in `src/content/derived.ts` (not author-edited): `githubUrl = https://github.com/${githubUsername}`, `githubDisplay = github.com/${githubUsername}`, `linkedinDisplay` (§4.5). No URL is hardcoded in more than one place.
+- **Dev-only validation:** when `import.meta.env.DEV`, `main.tsx` asserts every project `id` is unique and matches `/^[a-z0-9-]+$/`, throwing a descriptive error otherwise.
+- **Résumé filename:** the PDF is named after the author (e.g. `Remington-Jarrett-Resume.pdf`) so it is identifiable if a recruiter saves it. It opens in a new tab; no `download` attribute.
+- **Résumé source:** the authoritative résumé lives in the author's public repo `remyj4556/resume`. Before each build, `scripts/fetch-resume.mjs` downloads `site.resumeSourceUrl` (the `raw.githubusercontent.com` URL, with a 15s timeout) and overwrites `public${resumePath}`, so the daily rebuild (§5.3) picks up résumé changes. The response must be HTTP 2xx and start with `%PDF-`; otherwise the script warns and exits 0, leaving the committed copy in place. The committed PDF is therefore the fallback and should be refreshed by committing occasionally. Runs only in `prebuild`, not `predev`/`pretypecheck`.
+  - **Rationale:** serving the PDF from the site's own domain opens it directly in the browser; linking to GitHub instead would show GitHub's viewer page (blob URL) or force a download (raw URL, served as `application/octet-stream`). Failure is soft — unlike contributions (§5.3) — because a stale résumé is better than a failed deploy, and a broken fetch is not something the author needs to act on urgently.
 
 ### 5.3 Contribution data (build-time)
-Unchanged from v0.6: `scripts/fetch-contributions.mjs`, the failure table, `ContributionData` schema, token scope, freshness note, and the Vercel Cron daily rebuild (`api/rebuild.js`, `vercel.json`).
+GitHub's contribution calendar is only available via the authenticated GraphQL API (`user.contributionsCollection.contributionCalendar`). A token cannot be shipped to the browser, so data is fetched by a script before dev, build, and typecheck (scripts in §5.1).
+
+**`scripts/fetch-contributions.mjs`** — plain Node ESM, native `fetch`, no dependencies. Queries `totalContributions` and, per day, `date`, `weekday`, `contributionCount`, `contributionLevel`. Writes `src/data/contributions.json` (gitignored).
+
+| Condition | Output | Exit |
+|---|---|---|
+| `GH_CONTRIB_TOKEN` not set | `{ "status": "unavailable", "reason": "no-token" }`, logs a warning | 0 (local dev works without a token) |
+| Token set, valid response | `status: "ok"` data (below) | 0 |
+| Token set, **any** of: non-2xx HTTP status; a non-empty GraphQL `errors` array (GitHub returns these with HTTP 200); `data.user` null; `contributionCalendar` missing; schema mismatch (e.g. `weeks` not an array, a `contributionLevel` not one of the five known values, `weekday` not 0–6) | nothing written; logs the reason | **non-zero** — fails the build |
+
+**Rationale for failing:** a token is only set on Vercel, so a failure there means something broke (most likely an expired token). Failing the build makes it visible: Vercel keeps the previous deployment live, so the site never breaks, and the author is notified (§7). Silently falling back would let the calendar vanish unnoticed.
+
+**Schema** — `src/data/contributions.types.ts`:
+
+```ts
+export type ContributionLevel = 0 | 1 | 2 | 3 | 4; // NONE, FIRST_QUARTILE … FOURTH_QUARTILE
+export type ContributionDay = {
+  date: string;        // YYYY-MM-DD
+  weekday: number;     // 0 = Sunday … 6 = Saturday (from GitHub)
+  count: number;
+  level: ContributionLevel;
+};
+export type ContributionData =
+  | { status: "ok"; fetchedAt: string /* ISO 8601 */; total: number; weeks: { days: ContributionDay[] }[] }
+  | { status: "unavailable"; reason: "no-token" };
+```
+
+`weeks` is chronological; the first and last weeks may have fewer than 7 days.
+
+**Token:** a GitHub **classic** personal access token with **only the `read:user` scope** (no `repo` scope, so it cannot read any repository, public or private), stored in Vercel as `GH_CONTRIB_TOKEN`, scoped to **Production and Preview** environments (a broken token failing a preview build is a useful early signal). It is given an expiry (the author chooses; expiry surfaces as a failed deployment, §7).
+
+**Why classic with `read:user`, not fine-grained (changed in v0.7):** v0.6 specified a fine-grained token with no permissions. Measured on the live site, that undercounted: the page showed 139 contributions while the author's GitHub profile showed 230 for the same 366 days. A fine-grained token with no permissions cannot see activity in the author's private repositories, which GitHub counts on the profile when "Include private contributions on my profile" is enabled. A classic token with `read:user` reads the same contribution calendar the profile shows, including those private contributions as anonymous per-day counts (never repository names), without granting any repository access. This is the §8.5 case, resolved by changing the doc rather than the number.
+
+**Freshness:** data is refreshed roughly daily, so it can be up to ~30 hours old; the "Updated <date>" note (§4.4) makes this visible.
+
+**Daily refresh — Vercel Cron:**
+- `vercel.json` defines one cron job: path `/api/rebuild`, schedule `0 6 * * *`. Vercel's Hobby plan runs it once a day at an imprecise time within that hour — exact timing is not required.
+- `api/rebuild.js` — a Vercel function using the Web handler signature: `export async function GET(request)` (cron sends GET). It compares the `Authorization` header to `Bearer ${process.env.CRON_SECRET}` using a constant-time comparison (`crypto.timingSafeEqual` on equal-length buffers; unequal length → reject). On mismatch → 401. Otherwise POSTs to `process.env.VERCEL_DEPLOY_HOOK` and returns 200 (or 502 if the hook call fails).
+- Env vars in Vercel: `CRON_SECRET` (random string; Vercel sends it automatically with cron requests), `VERCEL_DEPLOY_HOOK` (Deploy Hook URL for `main`).
+
+**Rationale:** GitHub disables scheduled Actions workflows in public repos after 60 days without repository activity — a finished portfolio would hit that and silently stop refreshing. Vercel Cron has no such limit. Alternatives rejected: third-party contributions APIs (external dependency), embedded chart images (can't be styled).
 
 ### 5.4 File structure
 ```
@@ -273,7 +359,18 @@ index.html  vite.config.ts  vercel.json  .nvmrc
 ```
 
 ### 5.5 Metadata
-Unchanged from v0.6, with one addition: `index.html` also links the kit stylesheets and scripts from `public/assets/`, and font preloads cover Manrope and both JetBrains Mono files. The theme-color remains `#0a0e0a`. The no-JavaScript/SEO limitation is unchanged.
+- `index.html` contains placeholders: `%SITE_TITLE%`, `%SITE_DESCRIPTION%`, `%SITE_URL%`, `%OG_IMAGE_URL%`, `%NOSCRIPT%`.
+- A small **inline Vite plugin** in `vite.config.ts` (`transformIndexHtml` hook; no new dependency) imports `src/content/site.ts` and replaces them:
+  - `%SITE_TITLE%` → `<name> — <role>`
+  - `%SITE_DESCRIPTION%` → `site.description`
+  - `%SITE_URL%` → `site.siteUrl`
+  - `%OG_IMAGE_URL%` → `${site.siteUrl}/og-image.png` (absolute, as Open Graph requires)
+  - `%NOSCRIPT%` → a `<noscript>` block with the name, role, and plain links to the résumé, email, LinkedIn, and GitHub.
+- Known limitation: edits to `site.ts` don't update these tags in a running `vite` dev server until it is restarted. Not a bug.
+- v0.7 addition: `index.html` also links the kit stylesheets and scripts from `public/assets/`, and the font preloads cover Manrope and both JetBrains Mono files. `<html>` carries the kit's `data-type`, `data-radius`, `data-ground` and `data-buttons` attributes, and the head has `site-kind` and `page-type` metas.
+- Tags present: `<title>`, meta description, canonical link, Open Graph (`og:title`, `og:description`, `og:url`, `og:image`, `og:type=website`), `twitter:card=summary_large_image`, favicon, `apple-touch-icon`, `<meta name="theme-color" content="#0a0e0a">`, font preloads (§3.3), `lang="en"`.
+
+**No-JavaScript / SEO:** the site is client-rendered; without JS, visitors see only the `<noscript>` block. Accepted: recruiters arrive via links with JS enabled, link-preview crawlers read the static meta tags, and Google renders JS when indexing.
 
 ## 6. Accessibility & performance requirements
 - Semantic landmarks, one `h1`, headings one level at a time.
@@ -283,7 +380,9 @@ Unchanged from v0.6, with one addition: `index.html` also links the kit styleshe
 - Lighthouse (mobile) ≥ 90 for Performance and Accessibility on the deployed site. **Risk:** the kit adds weight; mitigations are copying only the parts used (there is no WebGL anywhere on the page), and the still fallback for the moment on phones. If the target cannot be met, that is a doc decision, not a silent drop.
 
 ## 7. Hosting & deployment
-Unchanged from v0.6. The redesign is developed on the branch `redesign/terminal-pop`; Vercel builds it as a preview, and it reaches production only by merging to `main`.
+- **Vercel**, connected to the public GitHub repo `remyj4556/portfolio-site`; pushes to `main` deploy to production; other branches get preview deployments.
+- Served on **`remyjarrett.dev`** (domain configured in Vercel's dashboard — not code).
+- One-time setup (author, in dashboards — not code): env vars `GH_CONTRIB_TOKEN` (Production + Preview; a classic token with only `read:user`, §5.3), `CRON_SECRET`, `VERCEL_DEPLOY_HOOK`; create the Deploy Hook; set Node 24; enable Web Analytics; **enable email notifications for failed production deployments**; add a calendar reminder to renew the token before it expires. After changing the token, redeploy (or wait for the next daily cron run) so the new data is built in.
 
 ## 8. Acceptance criteria
 v1 (redesign) is done when:
@@ -291,13 +390,21 @@ v1 (redesign) is done when:
 2. Every section in §4 is present and behaves as specified, including keyboard operation, the pause control (it stops the typed phrase and the border sweep) and the case-study fallbacks.
 3. None of the exclusions in §3.1 appear; the matrix rain code is gone.
 4. With a valid token the calendar renders; with no token the fallback renders; with an invalid token the build fails.
-5. The contribution total matches `github.com/remyj4556`; if not, that is a doc change.
+5. The contribution total on the site matches the total shown on `github.com/remyj4556` for the same period, private contributions included (this needs the classic `read:user` token, §5.3; the first v0.7 deploy showed 139 against the profile's 230 with the old no-permission token). If it still differs by more than a day's rounding or timing, that is a doc change, not a silent fix.
 6. The kit's checkers (copy lint, layout check at 1440/1024/820/768/390, consistency, performance, finish gate) run on the built page. Findings are fixed unless they fall in one of these **accepted waivers**, each with its reason: (a) caused by the placeholder content of §9 (solid-colour screenshots, lorem text, the unavailable-activity fallback without a token) — re-run when real content arrives; (b) the kit's one-or-two-screens-per-section rule on the Projects section, which grows with open cards (§4.3), and the section starts that follow from it; (c) `#root` — React's mount element sits above the header (the page is client-rendered; it does not change the visible structure); (d) card interior text not on the container's left lines and the card frame's hairline — bordered, padded cards are part of the design; (e) the h1 being a personal name rather than a product description, and `> prompt` headings — the terminal conceit (§3); (f) the analytics script 404 outside Vercel (§5.1: it only runs there); (g) the perf script's below-fold-images-not-lazy finding — the kit switches `loading="lazy"` images to eager once the page has loaded, so a later swap never shows an empty frame (first paint stays lazy) — and its oversized-image finding for the 1200×750 screenshots the content model specifies (no `srcset` in v1).
 7. Lighthouse targets in §6 are met on the deployed preview.
 8. **The author reviews screenshots** at 1440px and 390px, including one project card expanded and the case study mid-scroll. Deviations from this doc are fixed; requests that change the design go through the doc process first.
 
 ## 9. Placeholder content
-As in v0.6 (four sample projects, one without an image, one without links, one without `displayUrl`; placeholder intro, résumé, `og-image.png`, `apple-touch-icon.png`), plus: the first project carries three `walkthroughImages`: 1200×750 WebP panels of abstract UI blocks (a list, code lines, a chart) in the site's greens, with no text, so the case study's crossfade is visible. The author has said real content comes later; the layout must hold with the placeholders, and replacing them requires editing only `src/content/` and `public/`.
+Until the author supplies real content, the coder uses obviously fake placeholders:
+- Name "Your Name", first name "Your", role "Software Engineer", a generic description, one typed phrase, and intro.
+- Contact: `you@example.com`, `https://www.linkedin.com/in/your-profile`; GitHub from `githubUsername`.
+- **Four** sample projects with lorem-style text and varied tech tags; one without an image, one without links, one without `displayUrl` (to exercise optional fields). Placeholder screenshots are solid-colour 1200×750 WebP images.
+- `public/Your-Name-Resume.pdf`: a one-page PDF reading "Placeholder résumé".
+- `og-image.png` (1200×630) and `apple-touch-icon.png` (180×180): solid-colour placeholders.
+
+Replacing placeholders requires editing only `src/content/` and `public/`.
+- v0.7 addition: the first project carries three `walkthroughImages`: 1200×750 WebP panels of abstract UI blocks (a list, code lines, a chart) in the site's greens, with no text, so the case study's crossfade is visible. The author has said real content comes later; the layout must hold with the placeholders.
 
 ## 10. Open questions
 Resolved by the author (first draft):
@@ -318,4 +425,4 @@ Still open: none.
 - **v0.4** — Goldfish round 1: static role; WCAG 2.2.2 pause control; rain and typing fully specified; accessible card toggle and panel; calendar spec and data schema; metadata from `site.ts`; build fails on token errors; Vercel Cron refresh; tooling pinned.
 - **v0.5** — Added Vercel Web Analytics.
 - **v0.6** — Goldfish round 2: CSS cursor and SVG legend (glyphs missing from font subset); fonts committed as files and preloaded (dropped `@fontsource` dependency); header `fixed` with hero padding (sticky pushed hero below the fold); rain uses ResizeObserver and only reinitialises on column change, reads tokens via `getComputedStyle`, hard-clears columns on restart, continues on resume; strict GraphQL failure rules; `weekday` added to schema for row placement; scrollable calendar region focusable; `color-scheme: dark`; type/spacing/radius scale; pause/resume and reduced-motion semantics; pause control first in hero; mobile menu panel spec and focus behaviour; logo accessible name; dropped equal-card-height claim; month-label collision rule, pinned en-US date/number formats, CSS-class fills, calendar `role="img"`; "Updated <date>" note; LinkedIn display derived; `mailto:` exempt from new-tab rule; real TS types with `satisfies` and non-empty `typedPhrases`; derived URLs; dev-only project id validation; decorative frame parts `aria-hidden`; `min-height: 0` for collapse; React 19 pinned; token scoped to Production + Preview; cron handler signature, GET, constant-time compare, imprecise timing; contribution total check added to acceptance; Node scripts linted with `@ts-check`; tsconfig include for plugin imports; dev-server restart note; screenshots 1200×750 ≤150KB; 404 page, apple-touch-icon, theme-color, robots.txt; hover and selection colours; `--cal-0` lightened and claim softened; scroll-margin corrected.
-- **v0.7** — "Terminal-pop" redesign experiment (branch `redesign/terminal-pop`): restraint replaced by one committed concept with a fixed motion budget; matrix rain removed in favour of a `grain-gradient` ground behind a hero terminal window (typed phrase moved into it); hero layout `collage`; Manrope added beside JetBrains Mono (both self-hosted); design kit adopted as the styling layer (partial copy into `public/assets/`); new Case study section with a `pinned-chapters` moment and `Project.walkthroughImages`; dealt nav, close, footer, buttons and grounds recorded in §3.7; exclusions revised (gradients only on named grounds; no glass, no violet); kit checkers added to acceptance; open questions recorded in §10. Author decisions applied: gradient ban lifted for the two named grounds, proportional type accepted, case-study text duplication accepted, pause control does not stop the gradient. Implementation findings folded in: pause control moved into the terminal title bar; kit pause disc covers the gradient; `--text-muted` lightened; Contact and Footer merged into the kit's single closing element; footer name sized from the page width; Projects and Activity sections grow past the kit's fixed screen height; waivers listed in §8. The hero's gradient ground was scrapped: the terminal now fills its frame with nothing behind it and its border is a green gradient sweeping round the edge (CSS only; no WebGL; the kit's effect files removed). Browser audit fixes: terminal centred in its frame; case-study pinned hold repaired; 44px tap targets on phones; hero fits the first screen at phone and tablet widths; 404 page moved to the new fonts and muted colour.
+- **v0.7** — "Terminal-pop" redesign experiment (branch `redesign/terminal-pop`): restraint replaced by one committed concept with a fixed motion budget; matrix rain removed in favour of a `grain-gradient` ground behind a hero terminal window (typed phrase moved into it); hero layout `collage`; Manrope added beside JetBrains Mono (both self-hosted); design kit adopted as the styling layer (partial copy into `public/assets/`); new Case study section with a `pinned-chapters` moment and `Project.walkthroughImages`; dealt nav, close, footer, buttons and grounds recorded in §3.7; exclusions revised (gradients only on named grounds; no glass, no violet); kit checkers added to acceptance; open questions recorded in §10. Author decisions applied: gradient ban lifted for the two named grounds, proportional type accepted, case-study text duplication accepted, pause control does not stop the gradient. Implementation findings folded in: pause control moved into the terminal title bar; kit pause disc covers the gradient; `--text-muted` lightened; Contact and Footer merged into the kit's single closing element; footer name sized from the page width; Projects and Activity sections grow past the kit's fixed screen height; waivers listed in §8. The hero's gradient ground was scrapped: the terminal now fills its frame with nothing behind it and its border is a green gradient sweeping round the edge (CSS only; no WebGL; the kit's effect files removed). Browser audit fixes: terminal centred in its frame; case-study pinned hold repaired; 44px tap targets on phones; hero fits the first screen at phone and tablet widths; 404 page moved to the new fonts and muted colour. Contribution count: the site showed 139 against the profile's 230 because the no-permission fine-grained token could not see private-repository contributions; §5.3 and §7 now specify a classic token with only `read:user`. The doc was also made self-contained again: sections that had been shortened to "unchanged from v0.6" (§4.4, §4.7–4.8, §5.1–5.3, §5.5, §7, §9) were restored in full.
