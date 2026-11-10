@@ -7,8 +7,6 @@ import styles from './Footer.module.css'
 // Layout kit footer: the closing section (the "close-word" row) and the directory in one slab on
 // the lit ground ("footer--statement"). It is also the Contact section (#contact).
 export function Footer() {
-  const statement = site.typedPhrases[site.typedPhrases.length - 1]
-
   return (
     <footer className={`footer closing footer--statement ${styles.footer}`} id="contact" aria-labelledby="close-h">
       <div className="wrap">
@@ -31,15 +29,7 @@ export function Footer() {
 
         <div className="closing__links">
           <div className="grid">
-            <div className="span-4 stack-4">
-              <a className="nav__logo" href="#top" aria-label={`${site.firstName}, back to top`}>
-                <span className="mark" data-mark="ring" aria-hidden="true" />
-                {site.firstName}
-              </a>
-              <p className="footer__lede">{statement}</p>
-            </div>
-
-            <div className={`span-5 start-6 footer__col ${styles.contactCol}`}>
+            <div className={`span-6 footer__col ${styles.contactCol}`}>
               <h3>Contact</h3>
               <ul className={styles.contact}>
                 <li>
@@ -63,7 +53,7 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className={`span-2 start-11 footer__col ${styles.sectionsCol}`}>
+            <div className={`span-6 start-7 footer__col ${styles.sectionsCol}`}>
               <h3>Sections</h3>
               <ul>
                 <li>

@@ -24,6 +24,14 @@
   src: url('/fonts/jetbrains-mono-latin-700.woff2') format('woff2');
 }
 
+/* In-page links (header, footer, hero button, logo) scroll smoothly. The kit sets scroll-behavior: auto
+   on html and forces it again under reduced motion, so this only applies when motion is allowed. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 :root {
   color-scheme: dark;
 }
