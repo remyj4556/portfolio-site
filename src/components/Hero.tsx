@@ -22,7 +22,7 @@ function useReducedMotion() {
 }
 
 // Layout kit "collage" hero: words on the left, the terminal window on a lit ground at the right.
-// The ground is the kit's grain-gradient effect, mounted by the kit after render (data-fx).
+// The terminal fills the right-hand frame; its border carries the one animated gradient.
 export function Hero() {
   const reducedMotion = useReducedMotion()
   // Per page load; survives reduced-motion changes.
@@ -63,15 +63,8 @@ export function Hero() {
             {data.status === 'ok' && <p className={styles.proof}>{totalText(data.total)}</p>}
           </div>
 
-          <div
-            className={`hero__art span-6 start-7 ${styles.art}`}
-            data-fx="grain-gradient"
-            data-fx-seed="7"
-            data-fx-params='{"speed":0.8,"grainMotion":0}'
-          >
-            <div className="ly-piece ly-piece--main">
-              <HeroTerminal paused={paused} reducedMotion={reducedMotion} onToggle={() => setPaused((value) => !value)} />
-            </div>
+          <div className={`hero__art span-6 start-7 ${styles.art}`}>
+            <HeroTerminal paused={paused} reducedMotion={reducedMotion} onToggle={() => setPaused((value) => !value)} />
           </div>
         </div>
       </div>

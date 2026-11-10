@@ -8,10 +8,11 @@ type Props = { paused: boolean; reducedMotion: boolean; onToggle: () => void }
 // The hero's terminal window (DESIGN.md §4.2.2). Mostly decorative: the dots, title and the
 // echoed name and role are hidden from assistive tech (the left column already says them); the
 // intro is real text, the typed phrase carries its own visually-hidden copy, and the pause control
-// sits in the title bar, before the moving line.
+// sits in the title bar, before the moving line. Its border is the one animated gradient; the same
+// pause control stops it (paused) and reduced motion leaves it still.
 export function HeroTerminal({ paused, reducedMotion, onToggle }: Props) {
   return (
-    <div className={styles.window}>
+    <div className={`${styles.window} ${paused ? styles.paused : ''} ${reducedMotion ? styles.still : ''}`}>
       <div className={styles.bar}>
         <span className={styles.dots} aria-hidden="true">
           <span />

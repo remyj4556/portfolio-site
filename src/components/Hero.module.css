@@ -1,60 +1,42 @@
-/* The kit's collage layout offsets the window from the frame's left and top and cuts it at the right and
-   bottom. Here it is centred with an even margin on every side and shown whole (v0.7 §4.2): the cut
-   variables are zeroed so the window keeps no empty margin for a cut that no longer happens. */
+/* The kit gives this frame a lit ground, rounded corners and a hidden overflow. The terminal now fills it
+   edge to edge with nothing behind it (v0.7 §4.2), so the ground goes and the frame only holds the window. */
 .art {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  --art-pad: var(--s-7);
-  padding: var(--art-pad);
-  --ly-cut: 0px;
-  --ly-cut-room: 0px;
+  background: transparent;
+  border-radius: var(--r-md);
 }
 
-.art > :global(.ly-piece--main) {
-  position: relative;
-  left: auto;
-  top: auto;
-  width: 100%;
-}
-
-/* The kit adds 44px of bottom padding for its pause disc whenever the disc is present; the same
-   amount on top keeps the window centred in the frame. */
-.art:has(> :global(.ui-pause--below)) {
-  padding-top: calc(var(--art-pad) + 44px);
+.art > * {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 @media (max-width: 1023px) {
   .art {
-    --art-pad: var(--s-6);
-    /* The kit lets the frame shrink to 220px here, which suits an absolutely placed window but would
-       squash this in-flow one: the frame may grow with the window but never shrink below it. */
+    /* The kit lets the frame shrink to 220px here; it may grow with the window but never shrink below it. */
     flex: 1 0 auto;
-  }
-}
-
-@media (max-width: 639px) {
-  .art {
-    --art-pad: var(--s-4);
   }
 }
 
 .icons {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-5);
   list-style: none;
   padding: 0;
-  /* Each link is a 44px tap target around a 28px icon; pull the row back so the icon lines up with the text. */
-  margin-left: -8px;
 }
 
+/* A 28px icon on the container's left line, with a transparent 44px hit area laid past its box so the tap
+   target is large without the box leaving the container's lines. */
 .iconLink {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
+  position: relative;
+  display: block;
   color: var(--text-muted);
+}
+
+.iconLink::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
 }
 
 .iconLink:hover {

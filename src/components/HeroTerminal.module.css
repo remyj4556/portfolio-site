@@ -1,11 +1,65 @@
+/* The angle the gradient border sweeps round the window. Registered so it can be animated; a browser
+   without @property shows the border at its resting angle instead. */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* The window fills the hero frame with nothing behind it. Its 2px border is a conic gradient: the
+   page's dark green all round, with a short green sweep that travels once round the edge every 8s.
+   The fill is clipped to the padding box so only the border shows the gradient. */
 .window {
-  background: var(--p-surface);
-  border: 1px solid var(--border-strong);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid transparent;
   border-radius: var(--r-md);
+  background:
+    linear-gradient(var(--p-surface), var(--p-surface)) padding-box,
+    conic-gradient(
+        from var(--angle),
+        #1f3326 0%,
+        #1f3326 45%,
+        #087a26 68%,
+        #00b82e 82%,
+        #00ff41 93%,
+        #1f3326 100%
+      )
+      border-box;
   overflow: hidden;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   line-height: 1.6;
+  animation: sweep 8s linear infinite;
+}
+
+@keyframes sweep {
+  to {
+    --angle: 360deg;
+  }
+}
+
+/* The hero's pause control freezes the sweep where it is. */
+.paused {
+  animation-play-state: paused;
+}
+
+/* Reduced motion: the border rests, still showing its gradient. */
+.still {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .window {
+    animation: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .window {
+    font-size: var(--text-base);
+  }
 }
 
 .bar {
@@ -41,10 +95,12 @@
 }
 
 .body {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  padding: var(--space-4);
+  padding: var(--space-5);
 }
 
 .command {
@@ -68,14 +124,6 @@
 .typed {
   flex: 1;
   color: var(--p-accent);
-}
-
-/* A roomier window where the frame is tall (desktop); on smaller screens it takes only its content so the
-   hero still fits the first screen. */
-@media (min-width: 1024px) {
-  .body {
-    min-height: 400px;
-  }
 }
 
 /* On a phone the whole hero must fit the first screen, so the window's own spacing tightens. */

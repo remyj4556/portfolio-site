@@ -39,19 +39,19 @@ The site must answer, quickly:
 
 **Theme:** terminal-flavoured, dark, green accent — now **stylised and committed**: a terminal window is the hero's centrepiece, section headings are shell prompts, and the type is large and confident. Inspiration from *The Matrix*, not imitation.
 
-**Principle (replaces v0.6's "restraint"): one concept, fully committed, with a fixed budget of effects.** The terminal conceit appears in the hero window, the `>` prompts, the project-card chrome, the tags and the calendar; motion is limited to the budget in §3.5. Nothing else decorates.
+**Principle (replaces v0.6's "restraint"): one concept, fully committed, with a fixed budget of motion.** The terminal conceit appears in the hero window (whose border carries the one animated gradient), the `>` prompts, the project-card chrome, the tags and the calendar; motion is limited to the budget in §3.5. Nothing else decorates.
 
 **Rationale:** v0.6 was accessible and coherent but, below the hero, read as a standard dark card layout: the terminal idea lived mostly in the headings, sections looked alike, and the Matrix rain (the only visual flourish) is the most familiar "hacker site" device. The author asked for more style and "pop", and treats this redesign as an experiment (the previous design stays in git history).
 
 ### 3.1 Exclusions
-Changed from v0.6 (the author confirmed lifting the gradient ban for the experiment, limited to the two named grounds below; the glow ban is narrowed to element shadows and halos, since those grounds are soft light by nature):
+Changed from v0.6 (the author confirmed lifting the gradient ban for the experiment, limited to the two named uses below; the glow ban is narrowed to element shadows and halos, since a soft ground is light by nature):
 - **No glow on elements.** No `text-shadow` or `box-shadow` used to create neon effects, and no blur halos, on text, buttons, borders or focus rings.
 - **No frosted glass** (`backdrop-filter`) anywhere, including the header and menu.
 - **No violet or lavender** anywhere in the site's own design.
 - **No skills bubbles/pills that scroll, float, or marquee**, and no standalone "Skills" section. Tech tags on project cards are static and are not a skills section.
-- **Gradients are allowed only as the grounds dealt in §3.7** (the hero's `grain-gradient` effect and the case-study section's `bg-halo` ground), never on text, buttons, cards or borders.
+- **Gradients are allowed in exactly two places:** the hero terminal window's **border** (a green gradient sweeping round its edge, §4.2.1) and the case-study section's `bg-halo` ground (§3.7). Never on text, buttons, cards or any other surface; the terminal's own fill and everything behind it stay solid.
 
-**Rationale:** the first four are what makes a "tech" page look generic; the kit's own rules also forbid them. Gradients are confined to two named grounds so they stay a deliberate feature rather than a default.
+**Rationale:** the first four are what makes a "tech" page look generic; the kit's own rules also forbid them. Gradients are confined to two named uses so they stay a deliberate feature rather than a default. The first design for the hero put a drifting gradient ground behind the terminal; the author scrapped it for the border sweep, which keeps the page's one flourish on the terminal itself.
 
 ### 3.2 Colour tokens
 The palette is unchanged from v0.6 — terminal green is the author's brand — and is fed to the design kit (§5.1) as its brand colours, replacing the colours the kit would otherwise deal.
@@ -90,18 +90,18 @@ Superseded: the v0.6 type/spacing/radius tables are retired. Type sizes, spacing
 ### 3.5 Motion
 A **fixed budget**; nothing outside it moves:
 1. **The hero entrance** — the hero's elements enter once on load via the kit's motion layer (`data-enter`).
-2. **The one effect** — a `grain-gradient` ground behind the hero's terminal window (§4.2.1). One live WebGL context; nothing else on the page uses WebGL.
+2. **The border sweep** — a green gradient that travels once round the hero terminal's border every 8 seconds (§4.2.1). Pure CSS: no canvas, no WebGL.
 3. **The typed phrase** inside the terminal window (§4.2.2) — custom, retained from v0.6.
 4. **The one moment** — `pinned-chapters` in the Case study section (§4.3.1). Scroll-driven, inside its own section only.
 5. **The hover/press layer** from the kit's motion layer: linked cards lift 2px, buttons step on hover and press on click, underlines draw. No tilt, no magnetic buttons, no custom cursor.
 
 Nothing else may move because the page scrolled: no cards fading in, no parallax.
 
-**Reduced motion** (`prefers-reduced-motion: reduce`, tracked live without reload): the entrance does not play, the effect shows its still fallback, the typed phrase shows the first phrase statically with a solid cursor, the moment collapses to static rows. All content stays visible.
+**Reduced motion** (`prefers-reduced-motion: reduce`, tracked live without reload): the entrance does not play, the border sweep rests (the gradient stays visible, unmoving), the typed phrase shows the first phrase statically with a solid cursor, the moment collapses to static rows. All content stays visible.
 
-**Pause control (WCAG 2.2.2):** the effect and the typed phrase run longer than 5 seconds, so the hero keeps a visible pause/resume control (§4.2.3). The scroll-driven moment is not time-based and is exempt.
+**Pause control (WCAG 2.2.2):** the border sweep and the typed phrase run longer than 5 seconds, so the hero keeps one visible pause/resume control that stops both (§4.2.3). The scroll-driven moment is not time-based and is exempt.
 
-Phones get the kit's still or light version of the effect and moment (it decides per its own rules); the typed phrase runs on all sizes.
+Phones get the kit's still or light version of the moment (it decides per its own rules); the border sweep and the typed phrase run on all sizes.
 
 ### 3.6 Layout & interaction states
 - Content width and breakpoints from the kit; no horizontal page scroll down to 320px (the contribution calendar scrolls within its own container).
@@ -115,11 +115,11 @@ The kit chooses its parts by script, not by taste, so the result is recorded her
 | Part | Result | Notes |
 |---|---|---|
 | Kind | software | A developer's portfolio treated as a software page (dark page and effects are allowed there; a "service" page would forbid them). |
-| Hero | `collage` | Text left; the main window on a lit ground at the right six columns, cut by the frame's right and bottom edges. |
+| Hero | `collage` | Text left; the terminal window in the right six columns. The kit's lit ground behind the window and its offset and cut are dropped: the terminal fills the frame (§4.2). |
 | Palette | author's brand (§3.2) | Replaces the dealt "graphite and orange". |
 | Type | Manrope + JetBrains Mono | First pairing dealt. |
 | Radius | sharp | Kit setting for developer tools. |
-| Effect | `grain-gradient` | Hero art frame only. The non-terminal effects were excluded before the roll. |
+| Effect | none | The dealt `grain-gradient` ground was built and then replaced by the animated border (§4.2.1); the kit's effect files are no longer copied in. |
 | Moment | `pinned-chapters` | Case study section (§4.3.1). No second moment: the page has fewer than eight sections. |
 | Big scene | none | The kit's scenes need the client's own UI at true size; not available with placeholders. |
 | Section grounds | projects: plain · case study: `bg-halo` · activity: `bg-dots` · contact: plain | `bg-halo` and `bg-dots` are the kit's CSS grounds. |
@@ -142,13 +142,15 @@ The kit chooses its parts by script, not by taste, so the result is recorded her
   3. **Buttons** (two at most): primary **View projects** (`#projects`), secondary **Email me** (`mailto:`).
   4. **Icon links** — GitHub and LinkedIn (inline SVG, accessible names, external-link rules §4.7).
   5. **Proof line** (`--text-muted`): `1,234 contributions in the last year`, from the same data and formatter as §4.4; omitted when contribution data is unavailable.
-- **Right column:** the **terminal window** (§4.2.2) on the effect ground (§4.2.1); the pause control (§4.2.3) lives in the window's title bar, so it comes before the moving typed line in DOM order and never overlaps the headline at narrow widths. It is **centred in its frame with an even margin on every side and shown whole** — no cut at the right or bottom. (The kit's `collage` layout offsets the window and lets the frame cut it; the author found that off-centre, so the kit's offset and cut are overridden.) The frame holds back room for the kit's pause disc and the window is balanced against it. On phones the window stands alone under the text, whole, and the hero still fits the first screen.
+- **Right column:** the **terminal window** (§4.2.2), **filling the whole right-hand frame** (six columns wide and as tall as the hero's content area) with **nothing behind it** — no ground, no gradient, no canvas. Its border is the animated gradient (§4.2.1). The pause control (§4.2.3) lives in the window's title bar, so it comes before the moving typed line in DOM order and never overlaps the headline at narrow widths. On phones the window stands alone under the text, whole, and the hero still fits the first screen.
 - The "Hi, my name is" label from v0.6 is dropped.
 
-#### 4.2.1 Effect ground
-- The hero's art frame carries the kit's `grain-gradient` ground (`data-fx`), tinted from the palette in §3.2 (no violet), mounted by the kit's own script after React renders. No custom canvas code on the page.
-- It never sits under body text; the text column is on the plain page ground. It drifts slowly but visibly (`speed: 0.8`, against the kit's default of 0.5), with the film-grain shimmer switched off so only the colour moves. (An earlier setting of 0.15 was too close to still: the gradient looked static and the pause disc seemed to do nothing. Measured at 0.8, about 30% of pixels shift visibly over 4 seconds; paused, none do.) The kit draws it once as a picture on phones, shows one still frame under reduced motion, and falls back to a CSS picture without WebGL. On wider screens the kit adds its own small **pause disc** at the art's lower right, which stops the ground; this is what satisfies WCAG 2.2.2 for the gradient (§4.2.3).
-- **The matrix rain is removed** (component and code deleted). **Rationale:** it was the page's only flourish and the most familiar device of its genre; the author chose to replace it.
+#### 4.2.1 Border sweep
+- The terminal window has a **2px border drawn as a conic gradient**: the page's dark green (`#1f3326`) all the way round, with one short sweep of brighter greens (`#087a26` → `#00b82e` → `#00ff41`) that **travels once round the edge every 8 seconds**, clockwise, linear. The window's own fill (`--surface`) is clipped inside the border, so only the border shows the gradient.
+- **Implementation:** pure CSS — a registered `@property --angle` (type `<angle>`) animated from `0deg` to `360deg`, used as the `from` angle of the `conic-gradient` on the border box. No JavaScript, no canvas, no WebGL; the kit's effect runtime is not loaded. In a browser without `@property` support the border shows at its resting angle (a static green gradient) instead of moving.
+- No `box-shadow`, `text-shadow` or blur is added, so nothing glows (§3.1); the gradient is confined to the 2px border.
+- **Pause and reduced motion:** the hero's pause control (§4.2.3) sets the animation to paused, freezing the sweep where it is; under reduced motion the animation does not run and no pause control is shown (§3.5).
+- **Rationale:** the first hero design put a drifting gradient ground behind the terminal (a WebGL effect from the kit). The author scrapped it: the ground competed with the terminal and added WebGL weight. A border sweep keeps the hero's motion on the terminal itself, costs no WebGL, and keeps the page's one flourish contained.
 
 #### 4.2.2 Terminal window and typed phrase
 - A window with a title bar (three dots in `--border-strong`, title `remy@portfolio: ~` derived from the first name — display only), body on `--surface`, text in JetBrains Mono. It is a decorative composition: the bar and prompt characters are `aria-hidden="true"`.
@@ -164,7 +166,7 @@ The kit chooses its parts by script, not by taste, so the result is recorded her
 
 #### 4.2.3 Pause control
 - A `<button>` reading `[ pause motion ]` / `[ resume motion ]` (brackets drawn in CSS, because the kit flags bracketed text as unfinished content), `--text-muted`, small mono text, with `aria-pressed`, at the right of the terminal window's title bar.
-- When pressed: the typed phrase behaves per §4.2.2; the cursor stops blinking; the gradient is **not** affected — the author confirmed this control does not stop it. The gradient has its own kit pause disc (§4.2.1), so both moving things can be stopped. The two controls are separate by design.
+- When pressed: the typed phrase behaves per §4.2.2; the cursor stops blinking; the border sweep (§4.2.1) pauses too, freezing in place; resuming continues from that angle. One control stops everything in the hero that moves.
 - Per page load (not persisted). Hidden while reduced motion is on.
 
 ### 4.3 Projects
@@ -201,7 +203,7 @@ Unchanged in function: `public/404.html`, standalone, no JavaScript, `> 404`, "T
 
 ### 5.1 Stack & tooling
 - **Vite + React 19 + TypeScript** (strict), client-rendered static single-page build; no router, SSR or prerendering; React pinned to `^19`.
-- **Styling:** the **design kit** — a local set of CSS/JS assets (system tokens, layout, motion layer, backgrounds, one effect, one moment) — copied **in part** into `public/assets/` and loaded as plain files (`<link>` and module `<script>` in `index.html`). Only what §3.7 deals is copied (system, layout, motion, backgrounds, the `grain-gradient` effect, the `pinned-chapters` moment, their shared helpers) to keep weight down. CSS Modules remain for component-specific rules (terminal window, calendar, cards); the generated token block replaces `tokens.css` and is placed after the kit's stylesheets. The global stylesheet still holds `@font-face`, `color-scheme` and `::selection`.
+- **Styling:** the **design kit** — a local set of CSS/JS assets (system tokens, layout, motion layer, backgrounds, one moment) — copied **in part** into `public/assets/` and loaded as plain files (`<link>` and module `<script>` in `index.html`). Only what §3.7 deals is copied (system, layout, motion, backgrounds, the `pinned-chapters` moment, their shared helpers; the effect files are not copied, because nothing on the page uses a kit effect) to keep weight down. CSS Modules remain for component-specific rules (terminal window, calendar, cards); the generated token block replaces `tokens.css` and is placed after the kit's stylesheets. The global stylesheet still holds `@font-face`, `color-scheme` and `::selection`.
 - **React ↔ kit:** the kit's scripts enhance elements by data attributes and class names. They run **after React has rendered** (a mount effect, once) and must not be run twice (StrictMode). Elements the kit manages are not conditionally re-rendered by React.
 - **Runtime dependencies:** `react`, `react-dom`, `@vercel/analytics` — unchanged; the kit is committed files, not an npm dependency. **Dev dependencies:** unchanged (the `react-ts` template set). Any other dependency requires a doc change.
 - **Kit checkers** (copy lint, layout check, consistency, performance, finish gate) are run from the kit's own scripts folder, which lives outside the repository on the author's machine; their working files stay out of git (via `.git/info/exclude`, not `.gitignore`). They are checks, not build steps.
@@ -276,9 +278,9 @@ Unchanged from v0.6, with one addition: `index.html` also links the kit styleshe
 ## 6. Accessibility & performance requirements
 - Semantic landmarks, one `h1`, headings one level at a time.
 - All interactive elements keyboard-operable with a visible focus ring: 2px solid `--accent`, 2px offset (no glow).
-- Decorative elements (hero terminal chrome and prompts, effect ground, `>` prompts, `[+]` indicators, frame bars, placeholder panels, legend) are `aria-hidden`; images have alt text.
+- Decorative elements (hero terminal chrome and prompts, `>` prompts, `[+]` indicators, frame bars, placeholder panels, legend) are `aria-hidden`; images have alt text.
 - Motion: reduced-motion behaviour and pause control per §3.5.
-- Lighthouse (mobile) ≥ 90 for Performance and Accessibility on the deployed site. **Risk:** the kit and a WebGL ground add weight; mitigations are copying only the dealt parts, loading the effect and moment lazily near the viewport, and the still fallback on phones. If the target cannot be met, that is a doc decision, not a silent drop.
+- Lighthouse (mobile) ≥ 90 for Performance and Accessibility on the deployed site. **Risk:** the kit adds weight; mitigations are copying only the parts used (there is no WebGL anywhere on the page), and the still fallback for the moment on phones. If the target cannot be met, that is a doc decision, not a silent drop.
 
 ## 7. Hosting & deployment
 Unchanged from v0.6. The redesign is developed on the branch `redesign/terminal-pop`; Vercel builds it as a preview, and it reaches production only by merging to `main`.
@@ -286,7 +288,7 @@ Unchanged from v0.6. The redesign is developed on the branch `redesign/terminal-
 ## 8. Acceptance criteria
 v1 (redesign) is done when:
 1. `npm run lint`, `npm run typecheck` and `npm run build` pass on a fresh clone with no token set.
-2. Every section in §4 is present and behaves as specified, including keyboard operation, both pause controls (the title-bar button and the kit's disc) and the case-study fallbacks.
+2. Every section in §4 is present and behaves as specified, including keyboard operation, the pause control (it stops the typed phrase and the border sweep) and the case-study fallbacks.
 3. None of the exclusions in §3.1 appear; the matrix rain code is gone.
 4. With a valid token the calendar renders; with no token the fallback renders; with an invalid token the build fails.
 5. The contribution total matches `github.com/remyj4556`; if not, that is a doc change.
@@ -302,10 +304,10 @@ Resolved by the author (first draft):
 1. **Gradients and glow** — lifting the gradient ban for the two named grounds is correct; glow ban narrowed (§3.1).
 2. **Proportional type** — accepted (§3.3).
 3. **Case study duplicates card text** — accepted; the first project's card keeps its details panel.
-4. **Pausing the effect** — the pause control does not stop the gradient (§4.2.3).
+4. **Pausing the effect** — superseded: the effect is gone; the one pause control stops the typed phrase and the border sweep (§4.2.3).
 
-5. **React and the kit** — resolved: the kit's scripts are imported once, after a synchronous first render (`flushSync`), from `main.tsx`; the effect, the scroll moment and the menu all initialise. React must not re-render elements the kit manages: the header, the case study and the hero art hold no state.
-6. **Does the gradient settle** — superseded: the effect is tuned to near-rest and the kit's own pause disc stops it (§4.2.1), so no settling requirement is imposed.
+5. **React and the kit** — resolved: the kit's scripts are imported once, after a synchronous first render (`flushSync`), from `main.tsx`; the scroll moment and the menu initialise. React must not re-render elements the kit manages: the header, the case study and the hero frame hold no state.
+6. **Does the gradient settle** — superseded: there is no ground effect; the border sweep is pure CSS and pausable (§4.2.1).
 
 Still open: none.
 
@@ -316,4 +318,4 @@ Still open: none.
 - **v0.4** — Goldfish round 1: static role; WCAG 2.2.2 pause control; rain and typing fully specified; accessible card toggle and panel; calendar spec and data schema; metadata from `site.ts`; build fails on token errors; Vercel Cron refresh; tooling pinned.
 - **v0.5** — Added Vercel Web Analytics.
 - **v0.6** — Goldfish round 2: CSS cursor and SVG legend (glyphs missing from font subset); fonts committed as files and preloaded (dropped `@fontsource` dependency); header `fixed` with hero padding (sticky pushed hero below the fold); rain uses ResizeObserver and only reinitialises on column change, reads tokens via `getComputedStyle`, hard-clears columns on restart, continues on resume; strict GraphQL failure rules; `weekday` added to schema for row placement; scrollable calendar region focusable; `color-scheme: dark`; type/spacing/radius scale; pause/resume and reduced-motion semantics; pause control first in hero; mobile menu panel spec and focus behaviour; logo accessible name; dropped equal-card-height claim; month-label collision rule, pinned en-US date/number formats, CSS-class fills, calendar `role="img"`; "Updated <date>" note; LinkedIn display derived; `mailto:` exempt from new-tab rule; real TS types with `satisfies` and non-empty `typedPhrases`; derived URLs; dev-only project id validation; decorative frame parts `aria-hidden`; `min-height: 0` for collapse; React 19 pinned; token scoped to Production + Preview; cron handler signature, GET, constant-time compare, imprecise timing; contribution total check added to acceptance; Node scripts linted with `@ts-check`; tsconfig include for plugin imports; dev-server restart note; screenshots 1200×750 ≤150KB; 404 page, apple-touch-icon, theme-color, robots.txt; hover and selection colours; `--cal-0` lightened and claim softened; scroll-margin corrected.
-- **v0.7** — "Terminal-pop" redesign experiment (branch `redesign/terminal-pop`): restraint replaced by one committed concept with a fixed motion budget; matrix rain removed in favour of a `grain-gradient` ground behind a hero terminal window (typed phrase moved into it); hero layout `collage`; Manrope added beside JetBrains Mono (both self-hosted); design kit adopted as the styling layer (partial copy into `public/assets/`); new Case study section with a `pinned-chapters` moment and `Project.walkthroughImages`; dealt nav, close, footer, buttons and grounds recorded in §3.7; exclusions revised (gradients only on named grounds; no glass, no violet); kit checkers added to acceptance; open questions recorded in §10. Author decisions applied: gradient ban lifted for the two named grounds, proportional type accepted, case-study text duplication accepted, pause control does not stop the gradient. Implementation findings folded in: pause control moved into the terminal title bar; kit pause disc covers the gradient; `--text-muted` lightened; Contact and Footer merged into the kit's single closing element; footer name sized from the page width; Projects and Activity sections grow past the kit's fixed screen height; waivers listed in §8. Gradient speed raised to 0.8 so it visibly moves. Browser audit fixes: terminal centred in its frame; case-study pinned hold repaired; 44px tap targets on phones; hero fits the first screen at phone and tablet widths; 404 page moved to the new fonts and muted colour.
+- **v0.7** — "Terminal-pop" redesign experiment (branch `redesign/terminal-pop`): restraint replaced by one committed concept with a fixed motion budget; matrix rain removed in favour of a `grain-gradient` ground behind a hero terminal window (typed phrase moved into it); hero layout `collage`; Manrope added beside JetBrains Mono (both self-hosted); design kit adopted as the styling layer (partial copy into `public/assets/`); new Case study section with a `pinned-chapters` moment and `Project.walkthroughImages`; dealt nav, close, footer, buttons and grounds recorded in §3.7; exclusions revised (gradients only on named grounds; no glass, no violet); kit checkers added to acceptance; open questions recorded in §10. Author decisions applied: gradient ban lifted for the two named grounds, proportional type accepted, case-study text duplication accepted, pause control does not stop the gradient. Implementation findings folded in: pause control moved into the terminal title bar; kit pause disc covers the gradient; `--text-muted` lightened; Contact and Footer merged into the kit's single closing element; footer name sized from the page width; Projects and Activity sections grow past the kit's fixed screen height; waivers listed in §8. The hero's gradient ground was scrapped: the terminal now fills its frame with nothing behind it and its border is a green gradient sweeping round the edge (CSS only; no WebGL; the kit's effect files removed). Browser audit fixes: terminal centred in its frame; case-study pinned hold repaired; 44px tap targets on phones; hero fits the first screen at phone and tablet widths; 404 page moved to the new fonts and muted colour.
